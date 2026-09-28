@@ -1,0 +1,22 @@
+# Dépendances et builds (se régénèrent, ne se versionnent jamais)
+node_modules/
+dist/
+.astro/
+
+# Secrets et variables d'environnement : JAMAIS dans Git
+.env
+.env.*
+!.env.example
+
+# Rapports de tests et d'outils
+coverage/
+playwright-report/
+test-results/
+
+# Fichiers système / éditeur / outils
+.DS_Store
+Claude outputs/
+*.log
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

@@ -1,0 +1,77 @@
+/* =======================================================================
+   tokens.css — L'IDENTITÉ VISUELLE (repris de la maquette validée)
+   Deux thèmes miroirs : clair (:root) et sombre ([data-theme="dark"]).
+   Toute couleur, police ou espacement du site doit venir d'ici.
+   ======================================================================= */
+
+:root {
+  /* --- Thème CLAIR : blanc, sans dégradé (le miroir exact du thème noir) --- */
+  --color-bg: #fafafa; /* fond de la page */
+  --color-surface: #ffffff; /* cartes */
+  --color-text: #0a0a0a; /* texte principal */
+  --color-muted: #6b6b70; /* texte secondaire */
+  --color-border: #e6e6e8; /* lignes fines */
+  --color-accent: #0a0a0a; /* accent : noir (en sombre : blanc) */
+  --color-accent-soft: #efeff0; /* fond léger (menu actif, icônes) */
+  --color-on-accent: #ffffff; /* texte posé sur l'accent */
+  --color-ok: #1f8a5b; /* vert "obtenu / terminé" */
+  --color-wip: #b7791f; /* orange "en cours" */
+  --color-star: #b8860b; /* étoiles : jaune doré un peu sombre */
+  --tile-bg: #ffffff; /* fond des tuiles de logos */
+  --grid-line: rgba(0, 0, 0, 0.05); /* quadrillage des visuels projets */
+
+  /* Blocs "inversés" (Contact, bandeau Projets) : noirs en clair, clairs en sombre */
+  --inverse-bg: #0a0a0a;
+  --inverse-text: #fafafa;
+  --inverse-muted: #a1a1a6;
+  --inverse-border: #2a2a2d;
+
+  /* Sidebar en verre */
+  --glass-bg: rgba(255, 255, 255, 0.72); /* 0 = invisible, 1 = opaque */
+  --glass-border: rgba(0, 0, 0, 0.07);
+  --glass-hover: rgba(0, 0, 0, 0.04);
+  --glass-blur: 22px;
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+
+  /* Typographie */
+  --font-body: 'Geist Variable', system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  /* Mise en page */
+  --sidebar-width: 264px;
+  --sidebar-gap: 16px;
+  --content-max: 920px;
+  --radius: 10px;
+
+  /* Animations : mets 0s pour désactiver les apparitions au défilement */
+  --reveal-duration: 0.7s;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  color-scheme: light;
+}
+
+/* --- Thème SOMBRE : tout noir, sans dégradé --- */
+:root[data-theme='dark'] {
+  --color-bg: #000000;
+  --color-surface: #0e0e0f;
+  --color-text: #ededed;
+  --color-muted: #8e8e93;
+  --color-border: #232325;
+  --color-accent: #ffffff;
+  --color-accent-soft: #1c1c1e;
+  --color-on-accent: #000000;
+  --color-ok: #4cc38a;
+  --color-wip: #e8b04b;
+  --color-star: #d4a72c;
+  --tile-bg: #111112;
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --inverse-bg: #ededed;
+  --inverse-text: #0a0a0a;
+  --inverse-muted: #5a5a5f;
+  --inverse-border: #cfcfd2;
+  --glass-bg: rgba(14, 14, 15, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}

@@ -1,0 +1,81 @@
+---
+/**
+ * Page d'accueil, générée en deux versions : /fr/ et /en/.
+ * Pour l'instant, une simple page « en construction » qui valide la chaîne :
+ * Astro → layout → traductions → polices → design tokens.
+ * Le vrai contenu (accueil, sidebar, sections…) arrive à l'étape 5.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { languages, useTranslations, type Lang } from '../../i18n/ui';
+
+export const getStaticPaths = (() =>
+  Object.keys(languages).map((lang) => ({ params: { lang } }))) satisfies GetStaticPaths;
+
+const lang = Astro.params.lang as Lang;
+const t = useTranslations(lang);
+const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
+---
+
+<BaseLayout lang={lang} title={t('site.title')} description={t('site.description')}>
+  <main class="landing">
+    <p class="pill">{t('hero.pill')}</p>
+    <h1>
+      Mansa David Gocaley
+      <span class="sub">{t('hero.subtitle')}</span>
+    </h1>
+    <p class="status">{t('hero.status')}</p>
+    <a class="switch" href={`/${otherLang}/`} hreflang={otherLang}>
+      {t('lang.switch')} →
+    </a>
+  </main>
+</BaseLayout>
+
+<style>
+  .landing {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 96px 24px;
+  }
+
+  .pill {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-muted);
+    font-size: 13px;
+    margin: 0 0 28px;
+  }
+
+  h1 {
+    font-size: clamp(44px, 7vw, 96px);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    margin: 0 0 24px;
+  }
+
+  .sub {
+    display: block;
+    font-size: 0.45em;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-top: 14px;
+  }
+
+  .status {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+    margin: 0 0 20px;
+  }
+
+  .switch {
+    font-weight: 500;
+  }
+</style>

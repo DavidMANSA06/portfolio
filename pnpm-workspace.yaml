@@ -1,0 +1,11 @@
+# Réglages pnpm du projet : sécurité de la chaîne d'approvisionnement
+# Détails : docs/adr/0002-pnpm-et-chaine-d-approvisionnement.md
+
+# N'installe une nouvelle version d'un paquet que si elle est publiée depuis au moins 3 jours.
+# Un paquet piraté est en général repéré et retiré en quelques heures : ce délai nous protège.
+minimumReleaseAge: 4320 # minutes (3 jours)
+
+# Les scripts d'installation des dépendances (postinstall…) sont bloqués par défaut.
+# On liste ici, paquet par paquet, ceux qu'on autorise (true) ou refuse (false).
+allowBuilds:
+  esbuild: false # son script ne fait que vérifier le binaire : inutile, on le refuse

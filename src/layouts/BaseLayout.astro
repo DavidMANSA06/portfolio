@@ -1,0 +1,39 @@
+---
+/**
+ * BaseLayout : le squelette HTML commun à toutes les pages.
+ * Chaque page l'utilise ainsi :
+ *   <BaseLayout lang="fr" title="…" description="…"> contenu </BaseLayout>
+ */
+import '@fontsource-variable/geist'; // polices hébergées avec le site (aucun CDN tiers)
+import '@fontsource-variable/geist-mono';
+import '../styles/global.css';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="fr" href={new URL('/fr/', Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="color-scheme" content="light dark" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

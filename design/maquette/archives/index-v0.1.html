@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[Prénom Nom] — Portfolio DevSecOps</title>
+  <meta name="description" content="Portfolio de [Prénom Nom], DevSecOps." />
+
+  <!-- Polices (Google Fonts). Pour changer : choisis sur fonts.google.com
+       puis remplace l'URL ci-dessous ET les variables --font-* plus bas. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+  /* =====================================================================
+     1. DESIGN TOKENS — C'EST ICI QUE TU MODIFIES L'IDENTITÉ VISUELLE
+     Change une valeur ici → elle change partout sur la page.
+     ===================================================================== */
+  :root {
+    /* Couleurs */
+    --color-bg:        #FAFAF8;  /* fond de la page */
+    --color-surface:   #FFFFFF;  /* fond des cartes et de la sidebar */
+    --color-text:      #1A1A1A;  /* texte principal */
+    --color-muted:     #6B6B6B;  /* texte secondaire */
+    --color-border:    #E8E6E1;  /* lignes et bordures */
+    --color-accent:    #1F5F4A;  /* couleur d'accent (liens, puces, boutons) */
+    --color-accent-soft: #E7F0EC;/* version très claire de l'accent (fonds) */
+
+    /* Typographie */
+    --font-body:    "Instrument Sans", system-ui, sans-serif;
+    --font-display: "Instrument Serif", Georgia, serif;
+    --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+    /* Mise en page */
+    --sidebar-width: 280px;
+    --content-max:   760px;   /* largeur max du texte */
+    --radius:        10px;    /* arrondi des cartes et boutons */
+    --space:         8px;     /* unité d'espacement (tout est un multiple) */
+  }
+
+  /* =====================================================================
+     2. BASE
+     ===================================================================== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--color-accent); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; border-radius: 4px; }
+
+  /* =====================================================================
+     3. SIDEBAR (fixe à gauche sur ordinateur, barre en haut sur mobile)
+     ===================================================================== */
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0;
+    width: var(--sidebar-width);
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    padding: calc(var(--space) * 5) calc(var(--space) * 4);
+    display: flex; flex-direction: column;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--color-accent); color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--font-display); font-size: 20px;
+  }
+  .brand-name { font-weight: 600; line-height: 1.2; }
+  .brand-role { font-family: var(--font-mono); font-size: 12px; color: var(--color-muted); }
+
+  .nav { margin-top: calc(var(--space) * 7); display: flex; flex-direction: column; gap: 2px; }
+  .nav a {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 8px;
+    color: var(--color-muted); font-size: 15px;
+  }
+  .nav a:hover { background: var(--color-bg); color: var(--color-text); text-decoration: none; }
+  .nav a.active { background: var(--color-accent-soft); color: var(--color-accent); font-weight: 500; }
+  .nav-num { font-family: var(--font-mono); font-size: 11px; opacity: .7; }
+
+  .sidebar-footer { margin-top: auto; }
+  .status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--color-muted);
+    margin-bottom: calc(var(--space) * 2);
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #2E9E6B; box-shadow: 0 0 0 3px #2E9E6B26; }
+  .socials { display: flex; gap: 16px; font-size: 14px; }
+  .socials a { color: var(--color-muted); }
+  .socials a:hover { color: var(--color-accent); }
+
+  .menu-toggle { display: none; }
+
+  /* =====================================================================
+     4. CONTENU PRINCIPAL ET SECTIONS
+     ===================================================================== */
+  main { margin-left: var(--sidebar-width); }
+  .section {
+    max-width: calc(var(--content-max) + 160px);
+    padding: calc(var(--space) * 12) 80px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .section:last-of-type { border-bottom: none; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--color-accent);
+    margin: 0 0 calc(var(--space) * 2);
+  }
+  h1, h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; margin: 0; }
+  h2 { font-size: 44px; line-height: 1.1; margin-bottom: calc(var(--space) * 4); }
+  h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+  p { margin: 0 0 calc(var(--space) * 2); }
+  .muted { color: var(--color-muted); }
+
+  /* --- 4a. HERO --- */
+  .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+  .hero h1 { font-size: clamp(48px, 7vw, 88px); line-height: 1; margin-bottom: calc(var(--space) * 3); }
+  .hero h1 em { color: var(--color-accent); }
+  .hero-lead { font-size: 20px; color: var(--color-muted); max-width: 560px; margin-bottom: calc(var(--space) * 5); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 500; border: 1px solid transparent;
+  }
+  .btn:hover { text-decoration: none; }
+  .btn-primary { background: var(--color-accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-ghost { border-color: var(--color-border); color: var(--color-text); background: var(--color-surface); }
+  .btn-ghost:hover { border-color: var(--color-text); }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: calc(var(--space) * 5);
+    margin-top: calc(var(--space) * 10); padding-top: calc(var(--space) * 3);
+    border-top: 1px solid var(--color-border); font-size: 14px;
+  }
+  .hero-meta dt { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--color-muted); }
+  .hero-meta dd { margin: 4px 0 0; font-weight: 500; }
+
+  /* --- 4b. À PROPOS --- */
+  .about-grid { display: grid; grid-template-columns: 200px 1fr; gap: calc(var(--space) * 6); align-items: start; }
+  .photo {
+    aspect-ratio: 4 / 5; border-radius: var(--radius);
+    background: repeating-linear-gradient(45deg, var(--color-bg), var(--color-bg) 8px, var(--color-border) 8px, var(--color-border) 9px);
+    border: 1px solid var(--color-border);
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-size: 12px; color: var(--color-muted);
+  }
+  .facts { list-style: none; padding: 0; margin: calc(var(--space) * 4) 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; }
+  .facts li { border-top: 1px solid var(--color-border); padding-top: 12px; font-size: 15px; }
+  .facts span { display: block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--color-muted); }
+
+  /* --- 4c. COMPÉTENCES --- */
+  .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .skill-card {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius); padding: calc(var(--space) * 3);
+  }
+  .skill-card p { font-size: 14px; color: var(--color-muted); margin-bottom: 16px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+  .tag {
+    font-family: var(--font-mono); font-size: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--color-bg); border: 1px solid var(--color-border);
+  }
+  /* Ajoute class="tag learning" pour une compétence en cours d'apprentissage */
+  .tag.learning { border-style: dashed; color: var(--color-muted); }
+  .legend { display: flex; gap: 20px; margin-top: calc(var(--space) * 3); font-size: 13px; color: var(--color-muted); }
+  .legend .tag { font-size: 11px; }
+
+  .page-footer { padding: calc(var(--space) * 5) 80px; font-size: 13px; color: var(--color-muted); }
+
+  /* =====================================================================
+     5. RESPONSIVE — en dessous de 900px la sidebar devient une barre du haut
+     ===================================================================== */
+  @media (max-width: 900px) {
+    .sidebar {
+      position: sticky; top: 0; inset: auto; width: 100%; height: auto;
+      flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--color-border); z-index: 10;
+    }
+    .menu-toggle {
+      display: block; background: none; border: 1px solid var(--color-border);
+      border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 14px; cursor: pointer; color: var(--color-text);
+    }
+    .nav, .sidebar-footer { display: none; width: 100%; }
+    .sidebar.open .nav { display: flex; margin-top: 12px; }
+    .sidebar.open .sidebar-footer { display: block; padding: 12px 12px 4px; }
+    main { margin-left: 0; }
+    .section { padding: 64px 16px; }
+    .page-footer { padding: 32px 16px; }
+    .hero { min-height: auto; padding-top: 80px; }
+    h2 { font-size: 34px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .photo { max-width: 180px; }
+    .skills-grid, .facts { grid-template-columns: 1fr; }
+  }
+  </style>
+</head>
+<body>
+
+  <!-- ===================================================================
+       SIDEBAR — nom, navigation, statut, liens
+       Pour ajouter une section au menu : copie une ligne <a> et change
+       le href (#id-de-la-section) et le texte.
+       =================================================================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">P</div>  <!-- ton initiale -->
+      <div>
+        <div class="brand-name">[Prénom Nom]</div>
+        <div class="brand-role">[Intitulé du poste]</div>
+      </div>
+    </div>
+
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="sidebar">Menu</button>
+
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="#accueil"><span class="nav-num">01</span> Accueil</a>
+      <a href="#a-propos"><span class="nav-num">02</span> À propos</a>
+      <a href="#competences"><span class="nav-num">03</span> Compétences</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status"><span class="status-dot"></span> [Disponible pour …]</div>
+      <div class="socials">
+        <a href="#">GitHub</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Email</a>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- =================================================================
+         SECTION 01 — HERO (accueil)
+         ================================================================= -->
+    <section class="section hero" id="accueil">
+      <p class="eyebrow">Portfolio · DevSecOps</p>
+      <h1>[Prénom Nom]<br><em>[accroche courte]</em></h1>
+      <p class="hero-lead">
+        [Une ou deux phrases qui disent ce que tu fais et ce que tu cherches.
+        Ex. : « J'automatise et je sécurise la livraison logicielle, du commit à la production. »]
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#competences">Voir mes compétences →</a>
+        <a class="btn btn-ghost" href="#">Télécharger mon CV</a>
+      </div>
+
+      <dl class="hero-meta">
+        <div><dt>Localisation</dt><dd>[Ville, Pays]</dd></div>
+        <div><dt>Recherche</dt><dd>[CDI / alternance / stage]</dd></div>
+        <div><dt>Focus</dt><dd>[CI/CD · Sécurité · Cloud]</dd></div>
+      </dl>
+    </section>
+
+    <!-- =================================================================
+         SECTION 02 — À PROPOS
+         Pour mettre ta photo : remplace <div class="photo">…</div> par
+         <img class="photo" src="photo.jpg" alt="Portrait de …">
+         ================================================================= -->
+    <section class="section" id="a-propos">
+      <p class="eyebrow">02 — À propos</p>
+      <h2>Qui je suis</h2>
+
+      <div class="about-grid">
+        <div class="photo">Photo</div>
+        <div>
+          <p>[Paragraphe 1 — ton parcours en quelques lignes : d'où tu viens, ce qui t'a mené vers le DevSecOps.]</p>
+          <p class="muted">[Paragraphe 2 — ce qui te motive, ta façon de travailler, ce que tu apprends en ce moment.]</p>
+
+          <ul class="facts">
+            <li><span>Formation</span>[Diplôme / école]</li>
+            <li><span>Expérience</span>[X ans en …]</li>
+            <li><span>Langues</span>[Français, Anglais …]</li>
+            <li><span>En ce moment</span>[Certification / projet en cours]</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         SECTION 03 — COMPÉTENCES
+         Chaque carte = une catégorie. Pour en ajouter une, copie un bloc
+         <article class="skill-card">…</article> complet.
+         Une compétence = <li class="tag">Nom</li>
+         En cours d'apprentissage = <li class="tag learning">Nom</li>
+         ================================================================= -->
+    <section class="section" id="competences">
+      <p class="eyebrow">03 — Compétences</p>
+      <h2>Ce que je sais faire</h2>
+
+      <div class="skills-grid">
+        <article class="skill-card">
+          <h3>CI/CD & automatisation</h3>
+          <p>[Une phrase sur ce que tu fais avec ces outils.]</p>
+          <ul class="tags">
+            <li class="tag">Git</li>
+            <li class="tag">GitHub Actions</li>
+            <li class="tag learning">GitLab CI</li>
+          </ul>
+        </article>
+
+        <article class="skill-card">
+          <h3>Sécurité applicative</h3>
+          <p>[Une phrase sur ce que tu fais avec ces outils.]</p>
+          <ul class="tags">
+            <li class="tag">OWASP Top 10</li>
+            <li class="tag learning">SAST</li>
+            <li class="tag learning">DAST</li>
+          </ul>
+        </article>
+
+        <article class="skill-card">
+          <h3>Conteneurs & cloud</h3>
+          <p>[Une phrase sur ce que tu fais avec ces outils.]</p>
+          <ul class="tags">
+            <li class="tag">Docker</li>
+            <li class="tag learning">Kubernetes</li>
+            <li class="tag learning">Terraform</li>
+          </ul>
+        </article>
+
+        <article class="skill-card">
+          <h3>Langages & systèmes</h3>
+          <p>[Une phrase sur ce que tu fais avec ces outils.]</p>
+          <ul class="tags">
+            <li class="tag">Linux</li>
+            <li class="tag">Bash</li>
+            <li class="tag">Python</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="legend">
+        <span><span class="tag">Outil</span> maîtrisé</span>
+        <span><span class="tag learning">Outil</span> en apprentissage</span>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      © 2026 [Prénom Nom] · Maquette v0.1
+    </footer>
+  </main>
+
+  <!-- ===================================================================
+       6. SCRIPT — menu mobile + surlignage de la section active
+       (tu n'as normalement pas besoin d'y toucher)
+       =================================================================== -->
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggle  = document.getElementById('menu-toggle');
+    const links   = document.querySelectorAll('.nav a');
+
+    toggle.addEventListener('click', () => {
+      const open = sidebar.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    links.forEach(a => a.addEventListener('click', () => sidebar.classList.remove('open')));
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    document.querySelectorAll('main section[id]').forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
