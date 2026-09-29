@@ -34,6 +34,18 @@ Host github.com
 ssh-add --apple-use-keychain ~/.ssh/id_ed25519_github
 ```
 
+### Clé de signature séparée
+
+Une clé = un rôle. `id_ed25519_github` sert à **s'authentifier** (pousser), une seconde clé sert à **signer** les commits :
+
+```bash
+ssh-keygen -t ed25519 -C "macbook-david-github-signing" -f ~/.ssh/id_ed25519_github_signing -N ""
+pbcopy < ~/.ssh/id_ed25519_github_signing.pub
+```
+
+Sur GitHub : Settings → SSH and GPG keys → New SSH key → **Key type : Signing Key**.
+Avantage : si une clé doit être révoquée, l'autre rôle continue de fonctionner.
+
 ## 2. Configuration Git : commun en global, identité par plateforme
 
 Emails « noreply » (masquent l'email réel dans l'historique public) :
@@ -69,7 +81,7 @@ Emails « noreply » (masquent l'email réel dans l'historique public) :
 ```ini
 [user]
     email = ID+pseudo@users.noreply.github.com
-    signingkey = ~/.ssh/id_ed25519_github.pub
+    signingkey = ~/.ssh/id_ed25519_github_signing.pub
 ```
 
 `~/.gitconfig-gitlab` :
@@ -83,7 +95,7 @@ Emails « noreply » (masquent l'email réel dans l'historique public) :
 `~/.ssh/allowed_signers` (une ligne par identité, pour vérifier les signatures en local) :
 
 ```
-ID+pseudo@users.noreply.github.com ssh-ed25519 AAAA...(contenu de id_ed25519_github.pub)
+ID+pseudo@users.noreply.github.com ssh-ed25519 AAAA...(contenu de id_ed25519_github_signing.pub)
 ID-pseudo@users.noreply.gitlab.com ssh-ed25519 AAAA...(contenu de id_ed25519.pub)
 ```
 
@@ -115,7 +127,7 @@ cd ~/David.G/portfolio
 pnpm astro telemetry disable
 git init
 git config --show-origin user.email        # doit venir de ~/.gitconfig-github
-git config --show-origin user.signingkey   # doit être id_ed25519_github.pub
+git config --show-origin user.signingkey   # doit être id_ed25519_github_signing.pub
 git status                                  # relire : pas de node_modules, .env, .DS_Store, Claude outputs
 git add .
 git status
