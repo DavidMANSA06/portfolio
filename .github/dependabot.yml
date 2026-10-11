@@ -1,0 +1,32 @@
+# Dependabot ouvre des PR de mise à jour (qui passeront par la CI comme les autres).
+# Guide : docs/guides/02-ci-github-actions.md
+version: 2
+updates:
+  # Dépendances du projet (pnpm utilise l'écosystème « npm »)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Paris
+    # Même règle que minimumReleaseAge (pnpm-workspace.yaml) : une version doit avoir 3 jours.
+    cooldown:
+      default-days: 3
+    groups:
+      # Les petites mises à jour sont regroupées en une seule PR pour limiter le bruit.
+      mineures-et-correctifs:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: 'chore(deps)'
+
+  # Actions GitHub utilisées dans .github/workflows (met à jour les SHA épinglés)
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Paris
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: 'chore(ci)'
