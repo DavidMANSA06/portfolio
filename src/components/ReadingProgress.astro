@@ -1,0 +1,47 @@
+---
+/**
+ * ReadingProgress : fine barre en haut de l'écran qui avance avec le défilement.
+ * 100 % CSS (« scroll-driven animations ») : aucun JavaScript.
+ * Navigateur trop ancien → la barre n'apparaît simplement pas.
+ */
+---
+
+<div class="progress" aria-hidden="true"></div>
+
+<style>
+  .progress {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .progress {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 30;
+      pointer-events: none;
+      background: var(--color-text);
+      transform-origin: left;
+      animation: grow linear both;
+      animation-timeline: scroll(root);
+      transition: opacity 0.3s;
+    }
+
+    /* Invisible tant qu'on est sur l'accueil plein écran */
+    :global(html.js body.has-landing:not(.past-landing)) .progress {
+      opacity: 0;
+    }
+  }
+
+  @keyframes grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>

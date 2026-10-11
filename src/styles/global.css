@@ -87,6 +87,18 @@ img {
   }
 }
 
+/* Contenu placé à côté de la sidebar (fixe à gauche sur ordinateur, barre en haut sur mobile) */
+.with-sidebar {
+  margin-left: calc(var(--sidebar-width) + var(--sidebar-gap) * 2);
+}
+
+@media (max-width: 900px) {
+  .with-sidebar {
+    margin-left: 0;
+    padding-top: 64px;
+  }
+}
+
 /* Changement de thème : on remplace le fondu par défaut par l'animation en cercle (ThemeToggle) */
 ::view-transition-old(root),
 ::view-transition-new(root) {

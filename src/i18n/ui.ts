@@ -28,9 +28,21 @@ const fr = {
   'landing.cta.contact': 'Contactez-moi',
   'landing.scroll': 'Découvrir mon profil',
 
-  // Sections (titres)
-  'section.about': 'À propos',
-  'section.contact': 'Contact',
+  // Menu (sidebar) et titres des sections
+  'nav.label': 'Navigation principale',
+  'nav.home': 'Accueil',
+  'nav.about': 'À propos',
+  'nav.skills': 'Compétences',
+  'nav.experience': 'Expériences',
+  'nav.education': 'Formations',
+  'nav.certifications': 'Certifications',
+  'nav.contact': 'Contact',
+  'nav.projects': 'Mes projets',
+  'nav.projects.sub': 'Études de cas',
+  'menu.open': 'Ouvrir le menu',
+  'profile.role': 'Cybersécurité · DevSecOps',
+  'social.label': 'Liens',
+  'social.resume': 'CV (PDF)',
   'section.wip': 'Section en construction.',
 
   // Page Projets
@@ -56,8 +68,20 @@ const en: Record<keyof typeof fr, string> = {
   'landing.cta.contact': 'Contact me',
   'landing.scroll': 'Discover my profile',
 
-  'section.about': 'About',
-  'section.contact': 'Contact',
+  'nav.label': 'Main navigation',
+  'nav.home': 'Home',
+  'nav.about': 'About',
+  'nav.skills': 'Skills',
+  'nav.experience': 'Experience',
+  'nav.education': 'Education',
+  'nav.certifications': 'Certifications',
+  'nav.contact': 'Contact',
+  'nav.projects': 'My projects',
+  'nav.projects.sub': 'Case studies',
+  'menu.open': 'Open menu',
+  'profile.role': 'Cybersecurity · DevSecOps',
+  'social.label': 'Links',
+  'social.resume': 'Resume (PDF)',
   'section.wip': 'Section under construction.',
 
   'projects.title': 'Projects',

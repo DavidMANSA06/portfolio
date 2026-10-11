@@ -1,0 +1,517 @@
+---
+/**
+ * Sidebar : la barre latérale en verre (maquette v0.6).
+ * - Ordinateur : colonne fixe à gauche. Mobile (≤ 900 px) : barre en haut + menu dépliant.
+ * - Sur l'accueil, elle reste cachée tant qu'on est sur l'écran d'accueil plein écran,
+ *   puis glisse quand on descend (seulement si JavaScript fonctionne : sinon toujours visible).
+ * - Le lien de la section visible est mis en évidence (aria-current="location").
+ *
+ * Liens du menu : src/config/site.ts (sections) ; textes : src/i18n/ui.ts (nav.*).
+ */
+import { sections, site } from '../config/site';
+import { localizePath, useTranslations, type Lang } from '../i18n/ui';
+import Icon from './Icon.astro';
+import LangSwitch from './LangSwitch.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  lang: Lang;
+  /** Page actuelle : sur "projects", les liens de section renvoient vers l'accueil. */
+  current: 'home' | 'projects';
+}
+
+const { lang, current } = Astro.props;
+const t = useTranslations(lang);
+const base = current === 'home' ? '' : localizePath(lang);
+const { github, linkedin, resume } = site.links;
+---
+
+<aside class="sidebar" id="sidebar">
+  <div class="tools">
+    <LangSwitch lang={lang} />
+    <ThemeToggle lang={lang} />
+    <button
+      class="icon-btn menu-toggle"
+      id="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="sidebar"
+      aria-label={t('menu.open')}
+    >
+      <Icon name="menu" class="open-icon" />
+      <Icon name="close" class="close-icon" />
+    </button>
+  </div>
+
+  <div class="profile">
+    <!-- Photo : arrivera avec la section À propos (5.6) -->
+    <div class="avatar" aria-hidden="true">
+      {site.initials}
+    </div>
+    <div>
+      <p class="profile-name">{site.name}</p>
+      <p class="profile-role">{t('profile.role')}</p>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label={t('nav.label')}>
+    <span class="nav-indicator" aria-hidden="true"></span>
+    {sections.map((s) => (
+      <a href={`${base}#${s.id}`} data-section={s.id}>
+        <Icon name={s.icon} />
+        {t(s.key)}
+      </a>
+    ))}
+  </nav>
+
+  <a
+    class="nav-cta"
+    href={localizePath(lang, 'projets/')}
+    aria-current={current === 'projects' ? 'page' : undefined}
+  >
+    <Icon name="folder" />
+    <span class="nav-cta-text">
+      <span class="nav-cta-label">{t('nav.projects')}</span>
+      <span class="nav-cta-sub">{t('nav.projects.sub')}</span>
+    </span>
+    <Icon name="arrow-right" class="arrow" />
+  </a>
+
+  <div class="sidebar-footer">
+    <ul class="socials" aria-label={t('social.label')}>
+      {github && (
+        <li>
+          <a href={github} rel="me noopener">
+            GitHub
+          </a>
+        </li>
+      )}
+      {linkedin && (
+        <li>
+          <a href={linkedin} rel="me noopener">
+            LinkedIn
+          </a>
+        </li>
+      )}
+      <li>
+        <a href={`${base}#contact`}>Email</a>
+      </li>
+      {resume && (
+        <li>
+          <a href={resume}>{t('social.resume')}</a>
+        </li>
+      )}
+    </ul>
+  </div>
+</aside>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menu-toggle');
+
+  /* --- 1. Menu mobile : ouvrir / fermer (bouton, clic sur un lien, touche Échap) --- */
+  if (sidebar && menuBtn) {
+    const setOpen = (open: boolean) => {
+      sidebar.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+    };
+    menuBtn.addEventListener('click', () => setOpen(!sidebar.classList.contains('open')));
+    sidebar
+      .querySelectorAll('.nav a, .nav-cta')
+      .forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        setOpen(false);
+        menuBtn.focus();
+      }
+    });
+  }
+
+  /* --- 2. Accueil plein écran : la sidebar apparaît une fois l'accueil quitté --- */
+  const landing = document.querySelector('.landing');
+  if (landing) {
+    new IntersectionObserver(
+      ([entry]) => {
+        if (entry) document.body.classList.toggle('past-landing', entry.intersectionRatio <= 0.35);
+      },
+      { threshold: [0, 0.35, 1] },
+    ).observe(landing);
+  }
+
+  /* --- 3. Lien actif : suit la section visible, avec une pastille qui glisse --- */
+  const nav = sidebar?.querySelector<HTMLElement>('.nav');
+  const indicator = nav?.querySelector<HTMLElement>('.nav-indicator');
+  const links = [...(nav?.querySelectorAll<HTMLAnchorElement>('a[data-section]') ?? [])];
+
+  function moveIndicator() {
+    if (!indicator || !nav) return;
+    const active = nav.querySelector<HTMLElement>('a[aria-current]');
+    if (!active) {
+      indicator.style.opacity = '0';
+      return;
+    }
+    // Modifier .style depuis un script est autorisé par notre CSP (seuls les attributs
+    // style="" écrits dans le HTML sont bloqués).
+    indicator.style.opacity = '1';
+    indicator.style.height = `${active.offsetHeight}px`;
+    indicator.style.transform = `translateY(${active.offsetTop}px)`;
+  }
+
+  const targets = links
+    .map((a) => document.getElementById(a.dataset.section ?? ''))
+    .filter((el): el is HTMLElement => el !== null);
+
+  function setActive(id: string) {
+    for (const a of links) {
+      if (a.dataset.section === id) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    }
+    moveIndicator();
+  }
+
+  if (targets.length) {
+    nav?.classList.add('has-indicator');
+    // Une section devient « active » quand elle traverse le milieu de l'écran
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    targets.forEach((el) => observer.observe(el));
+
+    // Tout en bas de la page, la dernière section (Contact) n'atteint jamais le milieu :
+    // on l'active à la main.
+    const last = targets[targets.length - 1];
+    addEventListener(
+      'scroll',
+      () => {
+        const atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+        if (atBottom && last) setActive(last.id);
+      },
+      { passive: true },
+    );
+    addEventListener('resize', moveIndicator);
+  }
+</script>
+
+<style>
+  .sidebar {
+    position: fixed;
+    top: var(--sidebar-gap);
+    bottom: var(--sidebar-gap);
+    left: var(--sidebar-gap);
+    width: var(--sidebar-width);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 16px 20px 24px;
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+    border: 1px solid var(--glass-border);
+    border-radius: 22px;
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 var(--glass-border);
+    transition:
+      opacity 0.45s ease,
+      transform 0.45s ease,
+      visibility 0.45s;
+  }
+
+  /* Cachée sur l'accueil plein écran (uniquement avec JavaScript, classe posée par theme-init.js) */
+  :global(html.js body.has-landing:not(.past-landing)) .sidebar {
+    opacity: 0;
+    transform: translateX(-24px);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .tools {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+  .menu-toggle :global(.close-icon),
+  .sidebar.open .menu-toggle :global(.open-icon) {
+    display: none;
+  }
+  .sidebar.open .menu-toggle :global(.close-icon) {
+    display: block;
+  }
+
+  .profile {
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .avatar {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: grid;
+    place-items: center;
+    background: var(--color-accent-soft);
+    border: 3px solid var(--color-surface);
+    box-shadow: 0 0 0 1.5px var(--color-border);
+    font: 600 28px var(--font-mono);
+    color: var(--color-accent);
+  }
+
+  .profile p {
+    margin: 0;
+  }
+
+  .profile-name {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.25;
+  }
+
+  .profile-role {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
+    margin-top: 4px;
+  }
+
+  /* --- Menu des sections --- */
+  .nav {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+  }
+
+  .nav-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 0;
+    border-radius: 8px;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--color-accent-soft);
+    opacity: 0;
+    transition:
+      transform 0.45s var(--ease-out),
+      height 0.45s var(--ease-out),
+      opacity 0.25s;
+  }
+
+  .nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--color-muted);
+    font-size: 14.5px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s;
+  }
+
+  .nav a:hover {
+    background: var(--glass-hover);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .nav a[aria-current] {
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .nav.has-indicator a[aria-current] {
+    background: transparent;
+  }
+
+  /* --- Bouton Projets : séparé du menu, car il ouvre une autre page --- */
+  .nav-cta {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color 0.2s;
+  }
+
+  .nav-cta:hover {
+    text-decoration: none;
+    border-color: var(--color-text);
+  }
+
+  .nav-cta-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+
+  .nav-cta-label {
+    font-weight: 600;
+    font-size: 14.5px;
+  }
+
+  .nav-cta-sub {
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  .nav-cta :global(.arrow) {
+    margin-left: auto;
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  .nav-cta:hover :global(.arrow) {
+    transform: translateX(3px);
+  }
+
+  .nav-cta[aria-current='page'] {
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    border-color: var(--inverse-bg);
+  }
+
+  .nav-cta[aria-current='page'] .nav-cta-sub {
+    color: var(--inverse-muted);
+  }
+
+  /* --- Pied : réseaux --- */
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+  }
+
+  .socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 13px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .socials a {
+    color: var(--color-muted);
+  }
+
+  .socials a:hover {
+    color: var(--color-accent);
+  }
+
+  /* --- Mobile : barre en verre fixée en haut --- */
+  @media (max-width: 900px) {
+    .sidebar {
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: auto;
+      width: auto;
+      max-height: calc(100svh - 20px);
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px 8px 12px;
+      border-radius: 16px;
+    }
+
+    :global(html.js body.has-landing:not(.past-landing)) .sidebar {
+      transform: translateY(-16px);
+    }
+
+    .tools {
+      order: 2;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .profile {
+      order: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+      margin: 0;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      margin: 0;
+      border-width: 2px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .profile > div {
+      min-width: 0;
+    }
+
+    .profile-name {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-role {
+      display: none;
+    }
+
+    .nav,
+    .nav-cta,
+    .sidebar-footer {
+      width: 100%;
+    }
+    .nav {
+      order: 3;
+      margin-top: 12px;
+    }
+    .nav-cta {
+      order: 4;
+    }
+    .sidebar-footer {
+      order: 5;
+      padding: 16px 12px 6px;
+      margin-top: 12px;
+    }
+
+    /* Avec JavaScript : menu replié par défaut, déplié par le bouton */
+    :global(.js) .menu-toggle {
+      display: inline-flex;
+    }
+    :global(.js) .sidebar:not(.open) .nav,
+    :global(.js) .sidebar:not(.open) .nav-cta,
+    :global(.js) .sidebar:not(.open) .sidebar-footer {
+      display: none;
+    }
+
+    .nav-indicator {
+      display: none;
+    }
+    .nav.has-indicator a[aria-current] {
+      background: var(--color-accent-soft);
+    }
+  }
+</style>
