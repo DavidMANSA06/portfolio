@@ -1,0 +1,77 @@
+# Intégration continue : vérifie chaque PR avant qu'elle puisse être mergée sur main.
+# Guide : docs/guides/02-ci-github-actions.md
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch: # bouton « Run workflow » pour lancer la CI à la main
+
+# Moindre privilège : le jeton GITHUB_TOKEN ne peut que LIRE le dépôt.
+permissions:
+  contents: read
+
+# Si on pousse deux fois de suite sur la même branche, l'ancienne exécution est annulée.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ASTRO_TELEMETRY_DISABLED: 1
+    steps:
+      # Actions épinglées par SHA de commit (immuable) et non par tag (déplaçable).
+      # Le commentaire indique la version ; Dependabot mettra à jour les deux.
+      - name: Récupérer le code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false # le jeton n'est pas laissé sur le disque du runner
+
+      - name: Installer pnpm (version lue dans package.json → packageManager)
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Installer Node (version lue dans .nvmrc)
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Installer les dépendances (exactement celles du lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Vérifier le formatage (Prettier)
+        run: pnpm format:check
+
+      - name: Vérifier les types et construire le site (astro check + astro build)
+        run: pnpm build
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GITLEAKS_VERSION: 8.30.1
+      # Empreinte officielle (fichier gitleaks_8.30.1_checksums.txt de la release).
+      GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+    steps:
+      - name: Récupérer tout l'historique Git
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # tout l'historique : un secret supprimé reste dans les anciens commits
+          persist-credentials: false
+
+      - name: Télécharger gitleaks et vérifier son empreinte
+        run: |
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum --check --strict
+          tar -xzf gitleaks.tar.gz gitleaks
+
+      - name: Chercher des secrets dans tout l'historique
+        run: ./gitleaks git --redact --verbose --exit-code 1 .

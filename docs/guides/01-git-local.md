@@ -49,6 +49,7 @@ Avantage : si une clé doit être révoquée, l'autre rôle continue de fonction
 ## 2. Configuration Git : commun en global, identité par plateforme
 
 Emails « noreply » (masquent l'email réel dans l'historique public) :
+
 - GitHub : https://github.com/settings/emails → `ID+pseudo@users.noreply.github.com`
   (cocher « Keep my email addresses private » et « Block command line pushes that expose my email »).
 - GitLab : Préférences → Profil → « Use a private commit email » → `ID-pseudo@users.noreply.gitlab.com`.
@@ -116,6 +117,7 @@ Autres projets GitHub (deux options, cumulables) :
 L'option B ne s'active qu'une fois le `git remote add` fait : avant, `useConfigOnly` bloque le commit (erreur sans danger).
 
 Points d'attention :
+
 - `gitdir:` doit se terminer par `/` et ne s'applique qu'**à l'intérieur d'un dépôt** (après `git init`).
 - `useConfigOnly = true` : dans un dossier non couvert, Git refuse de commiter au lieu d'utiliser une
   mauvaise identité. Une erreur visible vaut mieux qu'une fuite silencieuse.
