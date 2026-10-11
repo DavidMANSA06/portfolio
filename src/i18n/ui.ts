@@ -17,20 +17,52 @@ const fr = {
   'site.title': 'Mansa David Gocaley — Cybersécurité & DevSecOps',
   'site.description':
     "Portfolio de Mansa David Gocaley, élève ingénieur en cybersécurité à l'IMT Atlantique : DevSecOps, sécurité applicative et offensive.",
-  'hero.pill': 'Élève ingénieur · IMT Atlantique',
-  'hero.subtitle': 'Cybersécurité & DevSecOps',
-  'hero.status': 'Site en construction : étape 4, structure du projet.',
-  'lang.switch': 'English version',
+
+  // Accueil plein écran
+  'landing.pill': 'Élève ingénieur · IMT Atlantique',
+  'landing.subtitle': 'Cybersécurité & DevSecOps',
+  'landing.lead':
+    "Je sécurise la chaîne de livraison logicielle, du code à l'infrastructure, avec un intérêt fort pour la sécurité applicative et offensive.",
+  'landing.cta.about': 'À propos de moi',
+  'landing.cta.projects': 'Mes projets',
+  'landing.cta.contact': 'Contactez-moi',
+  'landing.scroll': 'Découvrir mon profil',
+
+  // Sections (titres)
+  'section.about': 'À propos',
+  'section.contact': 'Contact',
+  'section.wip': 'Section en construction.',
+
+  // Page Projets
+  'projects.title': 'Projets',
+  'projects.back': "Retour à l'accueil",
+
+  // Outils
+  'lang.label': 'Changer de langue',
 } as const;
 
 const en: Record<keyof typeof fr, string> = {
   'site.title': 'Mansa David Gocaley — Cybersecurity & DevSecOps',
   'site.description':
     'Portfolio of Mansa David Gocaley, cybersecurity engineering student at IMT Atlantique: DevSecOps, application and offensive security.',
-  'hero.pill': 'Engineering student · IMT Atlantique',
-  'hero.subtitle': 'Cybersecurity & DevSecOps',
-  'hero.status': 'Under construction: step 4, project structure.',
-  'lang.switch': 'Version française',
+
+  'landing.pill': 'Engineering student · IMT Atlantique',
+  'landing.subtitle': 'Cybersecurity & DevSecOps',
+  'landing.lead':
+    'I secure the software delivery chain, from code to infrastructure, with a strong interest in application and offensive security.',
+  'landing.cta.about': 'About me',
+  'landing.cta.projects': 'My projects',
+  'landing.cta.contact': 'Contact me',
+  'landing.scroll': 'Discover my profile',
+
+  'section.about': 'About',
+  'section.contact': 'Contact',
+  'section.wip': 'Section under construction.',
+
+  'projects.title': 'Projects',
+  'projects.back': 'Back to home',
+
+  'lang.label': 'Switch language',
 };
 
 export const ui = { fr, en } as const;
@@ -44,4 +76,21 @@ export function useTranslations(lang: Lang) {
 /** Vérifie qu'une chaîne est une langue du site (utile pour les paramètres d'URL). */
 export function isLang(value: string | undefined): value is Lang {
   return value !== undefined && value in languages;
+}
+
+/**
+ * Construit une URL dans la bonne langue.
+ *   localizePath('fr', 'projets/') → '/fr/projets/'
+ */
+export function localizePath(lang: Lang, path = ''): string {
+  return `/${lang}/${path.replace(/^\//, '')}`;
+}
+
+/**
+ * Même page, autre langue : '/fr/projets/' → '/en/projets/'.
+ * Sert au bouton FR / EN.
+ */
+export function switchLangPath(pathname: string, to: Lang): string {
+  const rest = pathname.replace(/^\/(fr|en)(\/|$)/, '');
+  return localizePath(to, rest);
 }

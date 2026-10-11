@@ -1,0 +1,63 @@
+---
+/**
+ * LangSwitch : le bouton « FR / EN ».
+ * Dans la maquette, c'était du JavaScript qui masquait une langue.
+ * Ici, chaque langue a sa propre URL (/fr/…, /en/…) : c'est un simple lien,
+ * sans JavaScript, et mieux référencé par les moteurs de recherche.
+ */
+import { switchLangPath, useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const other: Lang = lang === 'fr' ? 'en' : 'fr';
+const t = useTranslations(lang);
+---
+
+<a
+  class="icon-btn"
+  href={switchLangPath(Astro.url.pathname, other)}
+  hreflang={other}
+  aria-label={`${t('lang.label')} (${other.toUpperCase()})`}
+>
+  <span class:list={{ on: lang === 'fr' }}>FR</span>
+  <span aria-hidden="true">/</span>
+  <span class:list={{ on: lang === 'en' }}>EN</span>
+</a>
+
+<style>
+  .icon-btn {
+    height: 36px;
+    min-width: 36px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 10px;
+    background: var(--glass-hover);
+    border: 1px solid var(--glass-border);
+    color: var(--color-muted);
+    font: 500 12px var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .icon-btn:hover {
+    border-color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .on {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .icon-btn {
+      height: 34px;
+      min-width: 34px;
+      padding: 0 8px;
+    }
+  }
+</style>

@@ -1,0 +1,29 @@
+---
+/**
+ * Icon : une icône SVG au trait, qui prend la couleur du texte (currentColor).
+ *   <Icon name="shield" />
+ * Ajouter une icône : ajoute son tracé SVG dans "paths" ci-dessous.
+ * Les icônes sont décoratives (aria-hidden) : le texte à côté porte le sens.
+ */
+const paths = {
+  shield: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',
+  'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+} as const;
+
+export type IconName = keyof typeof paths;
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['icon', className]}
+  viewBox="0 0 24 24"
+  aria-hidden="true"
+  focusable="false"
+  set:html={paths[name]}
+/>
