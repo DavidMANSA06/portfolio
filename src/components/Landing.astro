@@ -2,12 +2,12 @@
 /**
  * Landing : l'accueil plein écran (sans sidebar), repris de la maquette v0.6.
  * Textes : src/i18n/ui.ts (clés "landing.*").
- * Le bouton de thème clair / sombre arrivera dans la PR suivante (5.2).
  */
 import { localizePath, useTranslations, type Lang } from '../i18n/ui';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import LangSwitch from './LangSwitch.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   lang: Lang;
@@ -20,6 +20,7 @@ const t = useTranslations(lang);
 <header class="landing" id="accueil">
   <div class="landing-tools">
     <LangSwitch lang={lang} />
+    <ThemeToggle lang={lang} />
   </div>
 
   <div class="intro">

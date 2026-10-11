@@ -39,6 +39,7 @@ const fr = {
 
   // Outils
   'lang.label': 'Changer de langue',
+  'theme.label': 'Thème sombre',
 } as const;
 
 const en: Record<keyof typeof fr, string> = {
@@ -63,6 +64,7 @@ const en: Record<keyof typeof fr, string> = {
   'projects.back': 'Back to home',
 
   'lang.label': 'Switch language',
+  'theme.label': 'Dark theme',
 };
 
 export const ui = { fr, en } as const;

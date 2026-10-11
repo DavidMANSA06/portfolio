@@ -7,6 +7,7 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LangSwitch from '../../components/LangSwitch.astro';
+import ThemeToggle from '../../components/ThemeToggle.astro';
 import { languages, localizePath, useTranslations, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = (() =>
@@ -24,6 +25,7 @@ const t = useTranslations(lang);
   <main class="page">
     <div class="tools">
       <LangSwitch lang={lang} />
+      <ThemeToggle lang={lang} />
     </div>
     <h1>{t('projects.title')}</h1>
     <p class="wip">{t('section.wip')}</p>
@@ -41,6 +43,7 @@ const t = useTranslations(lang);
   .tools {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
   }
 
   h1 {

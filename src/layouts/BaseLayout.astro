@@ -17,12 +17,35 @@ interface Props {
 
 const { lang, title, description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+
+/*
+ * Content Security Policy : la liste blanche de ce que le navigateur a le droit de charger.
+ * Tout vient du site lui-même ('self') : aucun script, style, police ou image externe,
+ * et aucun code écrit directement dans la page. Une injection (XSS) ne pourrait donc rien exécuter.
+ * Uniquement en production : en développement, Vite injecte des scripts en ligne pour le
+ * rechargement à chaud, que cette CSP bloquerait.
+ * À l'étape 8, Nginx enverra la même règle en en-tête HTTP (plus complète : frame-ancestors…).
+ */
+const csp = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "img-src 'self'",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'none'",
+  "form-action 'self'",
+].join('; ');
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
+    {import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content={csp} />}
+    <!-- Thème clair / sombre appliqué avant l'affichage : voir public/theme-init.js -->
+    <script is:inline src="/theme-init.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
