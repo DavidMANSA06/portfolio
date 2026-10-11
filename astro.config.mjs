@@ -19,9 +19,17 @@ export default defineConfig({
   },
 
   // Le CSS reste dans des fichiers séparés (pas de <style> injecté dans la page) :
-  // cela nous permettra une Content Security Policy stricte (étape 6).
+  // cela permet une Content Security Policy stricte (voir BaseLayout.astro).
   build: {
     inlineStylesheets: 'never',
+  },
+
+  // Même règle pour le JavaScript : Astro intègre les petits scripts directement dans la page.
+  // Avec 0, chaque script devient un fichier .js séparé, autorisé par la CSP "script-src 'self'".
+  vite: {
+    build: {
+      assetsInlineLimit: 0,
+    },
   },
 
   // Pas de télémétrie ni de barre d'outils de développement injectée dans les pages.

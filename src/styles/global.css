@@ -57,6 +57,43 @@ img {
   flex-shrink: 0;
 }
 
+/* Petits boutons carrés des outils (langue, thème, menu) */
+.icon-btn {
+  height: 36px;
+  min-width: 36px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--glass-hover);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text);
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+.icon-btn:hover {
+  border-color: var(--color-text);
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .icon-btn {
+    height: 34px;
+    min-width: 34px;
+    padding: 0 8px;
+  }
+}
+
+/* Changement de thème : on remplace le fondu par défaut par l'animation en cercle (ThemeToggle) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
