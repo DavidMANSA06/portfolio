@@ -1,0 +1,307 @@
+---
+/**
+ * ProjectCase : une étude de cas de la page Projets (src/content/projets/*.yaml).
+ * Visuel (image ou grand numéro) + texte, en zigzag d'un projet à l'autre.
+ * data-cats sert aux filtres de la page (CSS seul, voir projets.astro).
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { formatRange } from '../lib/dates';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  project: CollectionEntry<'projets'>['data'];
+  number: number;
+}
+
+const { lang, project: p, number } = Astro.props;
+const t = useTranslations(lang);
+const num = String(number).padStart(2, '0');
+const organization = typeof p.organization === 'string' ? p.organization : p.organization[lang];
+const points = [
+  { label: t('projects.context'), text: p.context[lang] },
+  { label: t('projects.done'), text: p.done[lang] },
+  ...(p.result ? [{ label: t('projects.result'), text: p.result[lang] }] : []),
+];
+---
+
+<article class="case reveal" data-cats={p.categories.join(' ')} aria-labelledby={`case-${num}`}>
+  <div class="visual">
+    {p.image ? (
+      <Image
+        src={p.image}
+        alt={p.imageAlt?.[lang] ?? ''}
+        widths={[480, 800, 1200]}
+        sizes="(max-width: 1180px) 100vw, 480px"
+      />
+    ) : (
+      <>
+        <span class="num" aria-hidden="true">
+          {num}
+        </span>
+        {p.visualLabel && <span class="label">{p.visualLabel[lang]}</span>}
+      </>
+    )}
+  </div>
+
+  <div>
+    <p class="meta">
+      <span>{formatRange(lang, p.start, p.end, 'short')}</span>
+      <span>{organization}</span>
+      <span class:list={['status', p.status === 'termine' ? 'done' : 'wip']}>
+        {t(`projects.status.${p.status}`)}
+      </span>
+    </p>
+    <h2 id={`case-${num}`}>{p.title[lang]}</h2>
+    <p class="summary">{p.summary[lang]}</p>
+
+    <dl class="points">
+      {points.map((point) => (
+        <div>
+          <dt>{point.label}</dt>
+          <dd>{point.text}</dd>
+        </div>
+      ))}
+    </dl>
+
+    {p.tags.length > 0 && (
+      <ul class="tags" aria-label={t('projects.tags')}>
+        {p.tags.map((tag) => (
+          <li>{tag}</li>
+        ))}
+      </ul>
+    )}
+
+    {p.links.length > 0 && (
+      <p class="links">
+        {p.links.map((link) => (
+          <a href={link.url} target="_blank" rel="noopener noreferrer">
+            {link.label[lang]}{' '}
+            <span class="arrow" aria-hidden="true">
+              ↗
+            </span>
+            <span class="visually-hidden"> {t('link.newTab')}</span>
+          </a>
+        ))}
+      </p>
+    )}
+  </div>
+</article>
+
+<style>
+  /* Une étude de cas = un visuel + un texte, en zigzag */
+  .case {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  /* Zigzag : un projet sur deux a son visuel à droite */
+  .case:nth-of-type(even) .visual {
+    order: 2;
+  }
+
+  .visual {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    /* Quadrillage léger, comme une feuille de schéma */
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    transition: transform 0.3s ease;
+  }
+
+  .visual :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .num {
+    font-size: 96px;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    opacity: 0.9;
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .case:hover .visual {
+    transform: translateY(-4px);
+  }
+
+  .case:hover .num {
+    transform: translateX(6px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case:hover .visual,
+    .case:hover .num {
+      transform: none;
+    }
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: center;
+    margin: 0 0 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Pastille de statut : vert = terminé, orange = en cours */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .status::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .done {
+    color: var(--color-ok);
+  }
+
+  .wip {
+    color: var(--color-wip);
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0 0 12px;
+  }
+
+  .summary {
+    color: var(--color-muted);
+    font-size: 17px;
+    margin: 0 0 22px;
+  }
+
+  .points {
+    display: grid;
+    gap: 14px;
+    margin: 0 0 22px;
+  }
+
+  .points div {
+    padding-left: 16px;
+    border-left: 2px solid var(--color-border);
+  }
+
+  dt {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    margin-bottom: 2px;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 22px 0 0;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .links a {
+    color: var(--color-text);
+  }
+
+  .arrow {
+    display: inline-block;
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  .links a:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 1180px) {
+    .case {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .case:nth-of-type(even) .visual {
+      order: 0;
+    }
+
+    .visual {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  @media (max-width: 900px) {
+    h2 {
+      font-size: 26px;
+    }
+
+    .num {
+      font-size: 64px;
+    }
+  }
+</style>

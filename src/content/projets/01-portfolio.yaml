@@ -1,0 +1,32 @@
+# Un projet = un fichier. Le numéro du nom de fichier fixe l'ordre d'affichage.
+title:
+  fr: Ce portfolio, construit en DevSecOps
+  en: This portfolio, built the DevSecOps way
+summary:
+  fr: "Un site personnel qui sert aussi de terrain d'entraînement pour une chaîne DevSecOps complète."
+  en: 'A personal website that doubles as a training ground for a full DevSecOps pipeline.'
+organization:
+  fr: Projet personnel
+  en: Personal project
+start: '2026'
+status: en-cours # ou : termine
+categories: [devsecops] # devsecops, reseau, offensive, iot (une ou plusieurs)
+context:
+  fr: 'Mettre en pratique le DevSecOps de bout en bout sur un vrai projet.'
+  en: 'Practise end-to-end DevSecOps on a real project.'
+done:
+  fr: 'Maquette, puis CI/CD, analyses SAST/DAST/SCA, gestion des secrets, conteneurisation et monitoring.'
+  en: 'Mockup, then CI/CD, SAST/DAST/SCA scans, secrets management, containerisation and monitoring.'
+# result:   (à ajouter quand il est mesurable)
+#   fr: …
+#   en: …
+tags: [Astro, GitHub Actions, Docker, SAST, DAST, SCA]
+visualLabel: # texte du visuel tant qu'il n'y a pas d'image
+  fr: Capture ou schéma du pipeline
+  en: Screenshot or pipeline diagram
+# image: ../../assets/projets/portfolio.png   (et imageAlt: { fr: …, en: … })
+links:
+  - label:
+      fr: Code source
+      en: Source code
+    url: https://github.com/DavidMANSA06/portfolio

@@ -1,0 +1,21 @@
+title:
+  fr: Voiture radiocommandée connectée
+  en: Connected remote-controlled car
+summary:
+  fr: 'Une solution IoT complète : système embarqué, application mobile et back-office web.'
+  en: 'A complete IoT solution: embedded system, mobile app and web back-office.'
+organization: Orange Digital Academy
+start: '2023'
+end: '2024'
+status: termine
+categories: [iot]
+context:
+  fr: "Stage d'un an en développement logiciel."
+  en: 'One-year software development internship.'
+done:
+  fr: 'Voiture sur Raspberry Pi et Linux embarqué, application mobile et back-office reliés à des services backend.'
+  en: 'Raspberry Pi car on embedded Linux, mobile app and back-office connected to backend services.'
+tags: [Raspberry Pi, Python, OpenCV, Flutter, Node.js, Angular]
+visualLabel:
+  fr: Photo du prototype
+  en: Prototype photo
