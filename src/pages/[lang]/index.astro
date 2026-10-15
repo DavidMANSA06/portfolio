@@ -10,9 +10,11 @@ import CertificationGrid from '../../components/CertificationGrid.astro';
 import EducationGrid from '../../components/EducationGrid.astro';
 import ExperienceTimeline from '../../components/ExperienceTimeline.astro';
 import Landing from '../../components/Landing.astro';
+import PlatformList from '../../components/PlatformList.astro';
 import ReadingProgress from '../../components/ReadingProgress.astro';
 import Section from '../../components/Section.astro';
 import Sidebar from '../../components/Sidebar.astro';
+import SkillGrid from '../../components/SkillGrid.astro';
 import { sectionNumber } from '../../config/site';
 import { languages, useTranslations, type Lang } from '../../i18n/ui';
 
@@ -44,14 +46,14 @@ const t = useTranslations(lang);
       <p class="wip">{t('section.wip')}</p>
     </Section>
 
-    <!-- À venir (5.5) -->
     <Section
       id="competences"
       number={sectionNumber('competences')}
       eyebrow={t('nav.skills')}
-      title={t('nav.skills')}
+      title={t('skills.title')}
+      lead={t('skills.lead')}
     >
-      <p class="wip">{t('section.wip')}</p>
+      <SkillGrid lang={lang} />
     </Section>
 
     <Section
@@ -82,6 +84,7 @@ const t = useTranslations(lang);
       lead={t('certifications.lead')}
     >
       <CertificationGrid lang={lang} />
+      <PlatformList lang={lang} />
     </Section>
 
     <!-- À venir (5.6) -->

@@ -46,6 +46,10 @@ const fr = {
   'section.wip': 'Section en construction.',
 
   // Sections : titres et phrases d'introduction
+  'skills.title': 'Ma boîte à outils.',
+  'skills.lead': 'Les technologies et outils que je pratique, avec mon niveau estimé pour chacun.',
+  'skills.level': 'Niveau',
+  'platforms.title': "Plateformes d'entraînement",
   'experience.title': 'Expériences professionnelles.',
   'experience.lead': "Du développement logiciel à l'automatisation d'infrastructures réseau.",
   'education.title': 'Formations.',
@@ -110,6 +114,10 @@ const en: Record<keyof typeof fr, string> = {
   'social.resume': 'Resume (PDF)',
   'section.wip': 'Section under construction.',
 
+  'skills.title': 'My toolbox.',
+  'skills.lead': 'The technologies and tools I use, with my estimated level for each.',
+  'skills.level': 'Level',
+  'platforms.title': 'Training platforms',
   'experience.title': 'Work experience.',
   'experience.lead': 'From software development to network infrastructure automation.',
   'education.title': 'Education.',

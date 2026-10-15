@@ -1,0 +1,6 @@
+# BROUILLON (draft: true = non affiché) : remplis stat et profileUrl, puis passe draft à false.
+draft: true
+name: Hack The Box
+logo: hackthebox
+stat: '[pseudo · rang]' # ex. 'mansadavid · Top 5 %' (même texte en FR et EN)
+# profileUrl: https://app.hackthebox.com/profile/…

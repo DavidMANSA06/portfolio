@@ -1,0 +1,93 @@
+---
+/**
+ * PlatformList : les plateformes d'entraînement (src/content/plateformes/*.yaml).
+ * Rien n'est affiché tant qu'aucune plateforme n'est publiée (toutes en brouillon).
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Lang } from '../i18n/ui';
+import SkillLogo from './SkillLogo.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const items = (await getCollection('plateformes', ({ data }) => !data.draft)).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
+---
+
+{items.length > 0 && (
+  <div class="platforms reveal">
+    <h3>{t('platforms.title')}</h3>
+    <ul>
+      {items.map(({ data }) => (
+        <li>
+          <SkillLogo logo={data.logo} abbr={data.abbr} fallback={data.name} size="sm" />
+          <div>
+            {data.profileUrl ? (
+              <a href={data.profileUrl} target="_blank" rel="noopener noreferrer">
+                {data.name}
+                <span class="visually-hidden"> {t('link.newTab')}</span>
+              </a>
+            ) : (
+              data.name
+            )}
+            <small>{typeof data.stat === 'string' ? data.stat : data.stat[lang]}</small>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<style>
+  .platforms {
+    margin-top: 40px;
+  }
+
+  h3 {
+    font-size: 15px;
+    margin: 0 0 14px;
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+
+  ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    font-size: 14.5px;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  small {
+    display: block;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+
+  @media (max-width: 900px) {
+    ul {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

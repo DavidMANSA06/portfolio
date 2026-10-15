@@ -1,0 +1,13 @@
+title:
+  fr: Développement
+  en: Development
+icon: code
+skills:
+  - { name: Python, logo: python, level: 4 }
+  - { name: Bash, logo: gnubash, level: 4 }
+  - { name: JavaScript, logo: javascript, level: 3 }
+  - { name: Java, logo: openjdk, level: 3 }
+  - { name: PHP / Symfony, logo: symfony, level: 3 }
+  - { name: Node.js, logo: nodedotjs, level: 3 }
+  - { name: SQL, abbr: SQL, level: 3 }
+  - { name: API REST, abbr: API, level: 3 }

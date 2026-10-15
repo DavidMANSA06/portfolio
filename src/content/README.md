@@ -4,11 +4,13 @@ Les contenus du site, un fichier YAML par entrée, bilingues (`fr` et `en` oblig
 Le schéma de chaque collection est dans `src/content.config.ts` : `pnpm build` (et la CI)
 échoue avec un message clair si un champ manque ou est mal écrit.
 
-| Dossier           | Section        | Exemple                            |
-| ----------------- | -------------- | ---------------------------------- |
-| `experiences/`    | Expériences    | `2026-orange-innovation.yaml`      |
-| `formations/`     | Formations     | `2026-imt-atlantique.yaml`         |
-| `certifications/` | Certifications | `exemple.yaml` (modèle, brouillon) |
+| Dossier           | Section                           | Exemple                            |
+| ----------------- | --------------------------------- | ---------------------------------- |
+| `experiences/`    | Expériences                       | `2026-orange-innovation.yaml`      |
+| `formations/`     | Formations                        | `2026-imt-atlantique.yaml`         |
+| `certifications/` | Certifications                    | `exemple.yaml` (modèle, brouillon) |
+| `competences/`    | Compétences                       | `01-devsecops.yaml` (un groupe)    |
+| `plateformes/`    | Plateformes (sous Certifications) | `1-tryhackme.yaml` (brouillon)     |
 
 ## Ajouter une entrée
 
@@ -32,6 +34,20 @@ Au clic sur un diplôme, une fenêtre s'ouvre avec ces champs (tous facultatifs)
 - `website` : lien `https://` vers l'école ou la formation.
 
 Modèle commenté dans `2026-imt-atlantique.yaml`.
+
+## Compétences
+
+Un fichier = un groupe (titre, icône, liste de compétences). Le numéro du nom de fichier
+(`01-`, `02-`…) fixe l'ordre d'affichage. Pour chaque compétence :
+
+- `name` : le nom (texte simple, ou `fr:` / `en:` s'il se traduit) ;
+- `level` : le nombre d'étoiles, de 0 à 5 ;
+- `logo` : le nom du logo sur [simpleicons.org](https://simpleicons.org) (ex. `gnubash`).
+  Les logos viennent du paquet `simple-icons`, installé dans le projet : aucun appel à un CDN.
+  Un nom inconnu fait échouer le build ;
+- `abbr` : les initiales affichées s'il n'y a pas de logo (4 caractères max).
+
+Les logos noirs (OWASP, Symfony, Java…) passent automatiquement en blanc en thème sombre.
 
 ## Règles
 
