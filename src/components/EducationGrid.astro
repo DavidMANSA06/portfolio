@@ -1,0 +1,374 @@
+---
+/**
+ * EducationGrid : les formations (src/content/formations/*.yaml).
+ * - Une carte par ÉCOLE ; dedans, un ou plusieurs diplômes (ex. Licence puis Master à l'ESATIC).
+ * - Clic sur un diplôme → une fenêtre « Détails » s'ouvre (Popover API du navigateur :
+ *   aucun JavaScript, donc rien à autoriser dans la CSP). Échap ou clic à côté pour fermer.
+ */
+import { getCollection } from 'astro:content';
+import { byStartDesc, formatRange } from '../lib/dates';
+import { useTranslations, type Lang } from '../i18n/ui';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const entries = (await getCollection('formations', ({ data }) => !data.draft)).sort(byStartDesc);
+
+// Regroupe les diplômes par école, en gardant l'ordre (école la plus récente d'abord)
+const schools = new Map<string, typeof entries>();
+for (const entry of entries) {
+  const key = `${entry.data.school}|${entry.data.location}`;
+  schools.set(key, [...(schools.get(key) ?? []), entry]);
+}
+const groups = [...schools.values()].map((programs) => {
+  const first = programs[0]!.data;
+  const starts = programs.map((p) => p.data.start).sort();
+  const ends = programs.map((p) => p.data.end);
+  return {
+    school: first.school,
+    location: first.location,
+    start: starts[0]!,
+    // si un diplôme est en cours (pas de fin), l'école aussi
+    end: ends.includes(undefined) ? undefined : ends.sort().at(-1),
+    programs,
+  };
+});
+
+/** Texte libre → paragraphes (une ligne vide = nouveau paragraphe). Le texte reste échappé. */
+const paragraphs = (text: string) =>
+  text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+---
+
+<div class="grid">
+  {groups.map((g) => (
+    <article class="card reveal">
+      <div class="top">
+        <span class="badge-icon">
+          <Icon name="graduation" />
+        </span>
+        <span class="dates">{formatRange(lang, g.start, g.end, 'short')}</span>
+      </div>
+      <h3>{g.school}</h3>
+      <p class="school">{g.location}</p>
+
+      <ol class="programs">
+        {g.programs.map(({ id, data }) => (
+          <li class="program">
+            <p class="program-dates">{formatRange(lang, data.start, data.end, 'short')}</p>
+            <h4>{data.degree[lang]}</h4>
+            <p class="desc">{data.description[lang]}</p>
+            {/* Le bouton couvre tout le bloc (voir ::after) : on clique n'importe où dessus */}
+            <button class="more" type="button" popovertarget={`formation-${id}`}>
+              {t('education.more')}
+              <span class="visually-hidden"> : {data.degree[lang]}</span>
+              <Icon name="arrow-right" />
+            </button>
+
+            <div
+              class="details"
+              id={`formation-${id}`}
+              popover
+              role="dialog"
+              aria-labelledby={`formation-${id}-title`}
+            >
+              <div class="details-head">
+                <div>
+                  <p class="details-meta">
+                    {data.school} · {data.location} · {formatRange(lang, data.start, data.end)}
+                  </p>
+                  <h3 id={`formation-${id}-title`}>{data.degree[lang]}</h3>
+                </div>
+                <button
+                  class="icon-btn close"
+                  type="button"
+                  popovertarget={`formation-${id}`}
+                  popovertargetaction="hide"
+                  aria-label={t('education.close')}
+                  autofocus
+                >
+                  <Icon name="close" />
+                </button>
+              </div>
+
+              <p>{data.description[lang]}</p>
+              {data.details && paragraphs(data.details[lang]).map((p) => <p>{p}</p>)}
+
+              {data.highlights && (
+                <>
+                  <h4>{t('education.highlights')}</h4>
+                  <ul class="points">
+                    {data.highlights[lang].map((h) => (
+                      <li>{h}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {data.courses && (
+                <>
+                  <h4>{t('education.courses')}</h4>
+                  <ul class="tags">
+                    {data.courses[lang].map((c) => (
+                      <li>{c}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {data.website && (
+                <p class="website">
+                  <a href={data.website} target="_blank" rel="noopener noreferrer">
+                    {t('education.website')} ↗
+                    <span class="visually-hidden"> {t('link.newTab')}</span>
+                  </a>
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </article>
+  ))}
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 26px;
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .badge-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+
+  .badge-icon :global(.icon) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .dates,
+  .program-dates {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  h3 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 2px;
+  }
+
+  .school {
+    color: var(--color-muted);
+    font-size: 15px;
+    margin: 0 0 16px;
+  }
+
+  /* --- Les diplômes de l'école --- */
+  .programs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .program {
+    position: relative; /* pour que le bouton couvre tout le bloc */
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s;
+  }
+
+  .program:hover {
+    border-color: var(--color-text);
+  }
+
+  .program-dates {
+    margin: 0 0 2px;
+  }
+
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .desc {
+    font-size: 14.5px;
+    color: var(--color-muted);
+    margin: 0 0 10px;
+  }
+
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    font: 500 13px var(--font-body);
+    cursor: pointer;
+  }
+
+  /* Zone cliquable étendue à tout le bloc du diplôme */
+  .more::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+
+  .more :global(.icon) {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  .program:hover .more :global(.icon) {
+    transform: translateX(3px);
+  }
+
+  .more:focus-visible {
+    outline: none;
+  }
+
+  .more:focus-visible::after {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* --- Fenêtre « Détails » (popover) --- */
+  .details {
+    width: min(640px, calc(100vw - 32px));
+    max-height: min(80vh, 720px);
+    overflow-y: auto;
+    margin: auto;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .details::backdrop {
+    background: rgb(0 0 0 / 0.45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .details-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .details-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+    margin: 0 0 6px;
+  }
+
+  .details h3 {
+    font-size: 22px;
+    margin: 0;
+  }
+
+  .details h4 {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 22px 0 10px;
+  }
+
+  .details p {
+    font-size: 15px;
+    margin: 0 0 12px;
+  }
+
+  .close {
+    flex-shrink: 0;
+  }
+
+  .points {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 15px;
+  }
+
+  .points li {
+    margin-bottom: 4px;
+  }
+
+  .points li::marker {
+    color: var(--color-accent);
+  }
+
+  .website {
+    margin-top: 22px !important;
+  }
+
+  /* Ouverture en douceur (désactivée si « réduire les animations ») */
+  @media (prefers-reduced-motion: no-preference) {
+    .details:popover-open {
+      animation: pop 0.25s var(--ease-out);
+    }
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .details {
+      padding: 22px;
+    }
+  }
+</style>

@@ -25,3 +25,10 @@ export const sections = [
   { id: 'certifications', key: 'nav.certifications', icon: 'award' },
   { id: 'contact', key: 'nav.contact', icon: 'mail' },
 ] as const;
+
+export type SectionId = (typeof sections)[number]['id'];
+
+/** Numéro affiché d'une section (« 03 ») : sa place dans le menu, Accueil non compté. */
+export function sectionNumber(id: SectionId): number {
+  return sections.findIndex((s) => s.id === id);
+}

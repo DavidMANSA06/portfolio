@@ -1,17 +1,19 @@
 ---
 /**
  * Page d'accueil, générée en deux versions : /fr/ et /en/.
- * - 5.1 : accueil plein écran ; 5.3 : sidebar, barre de progression, cadre des sections.
- * Les sections sont encore vides : elles se remplissent PR après PR.
- * L'ordre et les ancres des sections viennent de src/config/site.ts.
+ * Chaque section a son composant ; son contenu vient de src/content/ (YAML) ou de src/i18n/ui.ts.
+ * L'ordre du menu et les ancres viennent de src/config/site.ts.
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CertificationGrid from '../../components/CertificationGrid.astro';
+import EducationGrid from '../../components/EducationGrid.astro';
+import ExperienceTimeline from '../../components/ExperienceTimeline.astro';
 import Landing from '../../components/Landing.astro';
 import ReadingProgress from '../../components/ReadingProgress.astro';
 import Section from '../../components/Section.astro';
 import Sidebar from '../../components/Sidebar.astro';
-import { sections } from '../../config/site';
+import { sectionNumber } from '../../config/site';
 import { languages, useTranslations, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = (() =>
@@ -19,9 +21,6 @@ export const getStaticPaths = (() =>
 
 const lang = Astro.params.lang as Lang;
 const t = useTranslations(lang);
-
-// Toutes les sections sauf « Accueil » (qui est le Landing)
-const contentSections = sections.filter((s) => s.id !== 'accueil');
 ---
 
 <BaseLayout
@@ -35,16 +34,70 @@ const contentSections = sections.filter((s) => s.id !== 'accueil');
   <Landing lang={lang} />
 
   <main class="with-sidebar">
-    {contentSections.map((s, i) => (
-      <Section id={s.id} number={i + 1} eyebrow={t(s.key)} title={t(s.key)}>
-        <p class="wip">{t('section.wip')}</p>
-      </Section>
-    ))}
+    <!-- À venir (5.6) -->
+    <Section
+      id="a-propos"
+      number={sectionNumber('a-propos')}
+      eyebrow={t('nav.about')}
+      title={t('nav.about')}
+    >
+      <p class="wip">{t('section.wip')}</p>
+    </Section>
+
+    <!-- À venir (5.5) -->
+    <Section
+      id="competences"
+      number={sectionNumber('competences')}
+      eyebrow={t('nav.skills')}
+      title={t('nav.skills')}
+    >
+      <p class="wip">{t('section.wip')}</p>
+    </Section>
+
+    <Section
+      id="experiences"
+      number={sectionNumber('experiences')}
+      eyebrow={t('nav.experience')}
+      title={t('experience.title')}
+      lead={t('experience.lead')}
+    >
+      <ExperienceTimeline lang={lang} />
+    </Section>
+
+    <Section
+      id="formations"
+      number={sectionNumber('formations')}
+      eyebrow={t('nav.education')}
+      title={t('education.title')}
+      lead={t('education.lead')}
+    >
+      <EducationGrid lang={lang} />
+    </Section>
+
+    <Section
+      id="certifications"
+      number={sectionNumber('certifications')}
+      eyebrow={t('nav.certifications')}
+      title={t('certifications.title')}
+      lead={t('certifications.lead')}
+    >
+      <CertificationGrid lang={lang} />
+    </Section>
+
+    <!-- À venir (5.6) -->
+    <Section
+      id="contact"
+      number={sectionNumber('contact')}
+      eyebrow={t('nav.contact')}
+      title={t('nav.contact')}
+    >
+      <p class="wip">{t('section.wip')}</p>
+    </Section>
   </main>
 </BaseLayout>
 
 <style>
-  /* Texte provisoire des sections vides : disparaît au fil des PR */
+  /* Texte provisoire des sections encore vides */
   .wip {
     font-family: var(--font-mono);
     font-size: 13px;

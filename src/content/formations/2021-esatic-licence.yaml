@@ -1,0 +1,13 @@
+# BROUILLON (draft: true = non affiché) : complète les champs, puis passe draft à false.
+# Même école que 2024-esatic-master.yaml → les deux diplômes s'affichent dans la même carte ESATIC.
+draft: true
+degree:
+  fr: Licence · [Intitulé de la licence]
+  en: "Bachelor's degree · [Programme title]"
+school: ESATIC # doit être écrit EXACTEMENT comme dans l'autre fichier ESATIC
+location: Abidjan # idem
+start: '2021' # à corriger
+end: '2024' # à corriger
+description:
+  fr: '[Une phrase sur la licence.]'
+  en: '[One sentence about the degree.]'

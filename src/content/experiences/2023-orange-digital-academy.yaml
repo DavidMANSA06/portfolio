@@ -1,0 +1,21 @@
+title:
+  fr: Stagiaire développement logiciel
+  en: Software development intern
+organization: Orange Côte d'Ivoire / Orange Digital Academy
+location: Abidjan
+type: stage
+duration:
+  fr: 1 an
+  en: 1 year
+start: '2023'
+end: '2024'
+points:
+  fr:
+    - 'Solution IoT : application mobile, web et système embarqué.'
+    - "Conception d'une voiture radiocommandée sur Raspberry Pi et Linux embarqué."
+    - 'Application mobile et back-office web communiquant avec des services backend.'
+  en:
+    - 'IoT solution: mobile app, web app and embedded system.'
+    - 'Designed a remote-controlled car based on Raspberry Pi and embedded Linux.'
+    - 'Mobile app and web back-office communicating with backend services.'
+tags: [Raspberry Pi, Python, OpenCV, Flutter, Node.js, Angular]

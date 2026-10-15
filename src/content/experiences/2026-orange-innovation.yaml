@@ -1,0 +1,22 @@
+# Une expérience = un fichier. Le nom du fichier sert d'identifiant (AAAA-organisation.yaml).
+title:
+  fr: 'Stagiaire ingénieur : automatisation et sécurité des réseaux IP'
+  en: 'Engineering intern: IP network automation and security'
+organization: Orange Innovation
+location: Cesson-Sévigné
+type: stage
+duration:
+  fr: 4 mois
+  en: 4 months
+start: '2026-04'
+end: '2026-08'
+points:
+  fr:
+    - "R&D : automatisation, programmabilité et orchestration d'infrastructures IP."
+    - "Modélisation de services et d'équipements IP/MPLS multiconstructeurs avec YANG / OpenConfig."
+    - "Scripts Python/Bash et connecteurs API pour automatiser l'exploitation et le déploiement."
+  en:
+    - 'R&D: automation, programmability and orchestration of IP infrastructures.'
+    - 'Modelled multi-vendor IP/MPLS services and devices with YANG / OpenConfig.'
+    - 'Python/Bash scripts and API connectors to automate operations and service deployment.'
+tags: [Python, Bash, Docker, GitLab CI/CD, NETCONF, RESTCONF, Cisco NSO]
