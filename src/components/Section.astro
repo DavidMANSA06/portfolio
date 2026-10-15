@@ -1,0 +1,64 @@
+---
+/**
+ * Section : le cadre commun des sections de l'accueil.
+ *   <Section id="competences" number={2} eyebrow="Compétences" title="Ma boîte à outils.">
+ *     … contenu …
+ *   </Section>
+ * « eyebrow » = la petite ligne au-dessus du titre (« 02 — Compétences »).
+ */
+interface Props {
+  id: string;
+  number: number;
+  eyebrow: string;
+  title: string;
+}
+
+const { id, number, eyebrow, title } = Astro.props;
+const num = String(number).padStart(2, '0');
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <p class="eyebrow">
+    {num} — {eyebrow}
+  </p>
+  <h2 id={`${id}-title`}>{title}</h2>
+  <slot />
+</section>
+
+<style>
+  .section {
+    max-width: calc(var(--content-max) + 160px);
+    padding: 104px 80px;
+  }
+
+  .section + .section {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 14px;
+  }
+
+  h2 {
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin: 0 0 14px;
+  }
+
+  @media (max-width: 900px) {
+    .section {
+      padding: 72px 16px;
+    }
+
+    h2 {
+      font-size: 32px;
+    }
+  }
+</style>

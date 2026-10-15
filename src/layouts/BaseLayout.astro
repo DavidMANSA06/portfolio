@@ -3,6 +3,7 @@
  * BaseLayout : le squelette HTML commun à toutes les pages.
  * Chaque page l'utilise ainsi :
  *   <BaseLayout lang="fr" title="…" description="…"> contenu </BaseLayout>
+ * bodyClass (optionnel) : classe ajoutée à <body>, ex. "has-landing" sur l'accueil.
  */
 import '@fontsource-variable/geist'; // polices hébergées avec le site (aucun CDN tiers)
 import '@fontsource-variable/geist-mono';
@@ -13,9 +14,10 @@ interface Props {
   lang: Lang;
   title: string;
   description: string;
+  bodyClass?: string;
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, title, description, bodyClass } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 /*
@@ -56,7 +58,7 @@ const csp = [
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="color-scheme" content="light dark" />
   </head>
-  <body>
+  <body class={bodyClass}>
     <slot />
   </body>
 </html>

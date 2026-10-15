@@ -1,13 +1,17 @@
 ---
 /**
  * Page d'accueil, générée en deux versions : /fr/ et /en/.
- * 5.1 : l'accueil plein écran est en place.
- * Les sections ci-dessous sont des emplacements vides, remplis PR après PR
- * (sidebar, À propos, Compétences, Expériences…).
+ * - 5.1 : accueil plein écran ; 5.3 : sidebar, barre de progression, cadre des sections.
+ * Les sections sont encore vides : elles se remplissent PR après PR.
+ * L'ordre et les ancres des sections viennent de src/config/site.ts.
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Landing from '../../components/Landing.astro';
+import ReadingProgress from '../../components/ReadingProgress.astro';
+import Section from '../../components/Section.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { sections } from '../../config/site';
 import { languages, useTranslations, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = (() =>
@@ -15,32 +19,32 @@ export const getStaticPaths = (() =>
 
 const lang = Astro.params.lang as Lang;
 const t = useTranslations(lang);
+
+// Toutes les sections sauf « Accueil » (qui est le Landing)
+const contentSections = sections.filter((s) => s.id !== 'accueil');
 ---
 
-<BaseLayout lang={lang} title={t('site.title')} description={t('site.description')}>
+<BaseLayout
+  lang={lang}
+  title={t('site.title')}
+  description={t('site.description')}
+  bodyClass="has-landing"
+>
+  <ReadingProgress />
+  <Sidebar lang={lang} current="home" />
   <Landing lang={lang} />
 
-  <main>
-    <section class="section" id="a-propos">
-      <h2>{t('section.about')}</h2>
-      <p class="wip">{t('section.wip')}</p>
-    </section>
-
-    <section class="section" id="contact">
-      <h2>{t('section.contact')}</h2>
-      <p class="wip">{t('section.wip')}</p>
-    </section>
+  <main class="with-sidebar">
+    {contentSections.map((s, i) => (
+      <Section id={s.id} number={i + 1} eyebrow={t(s.key)} title={t(s.key)}>
+        <p class="wip">{t('section.wip')}</p>
+      </Section>
+    ))}
   </main>
 </BaseLayout>
 
 <style>
-  /* Styles provisoires des sections vides : remplacés au fil des PR */
-  .section {
-    max-width: var(--content-max);
-    margin: 0 auto;
-    padding: 96px 24px;
-  }
-
+  /* Texte provisoire des sections vides : disparaît au fil des PR */
   .wip {
     font-family: var(--font-mono);
     font-size: 13px;
