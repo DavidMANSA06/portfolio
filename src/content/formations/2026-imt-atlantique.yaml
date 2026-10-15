@@ -1,0 +1,26 @@
+degree:
+  fr: Diplôme d'ingénieur · 3e année
+  en: Engineering degree · 3rd year
+school: IMT Atlantique
+location: Rennes
+start: '2026-09'
+end: '2027-09'
+description:
+  fr: Spécialité cybersécurité.
+  en: Major in cybersecurity.
+# Matières clés (facultatif)
+courses:
+  fr: [Sécurité des réseaux, Cryptographie]
+  en: [Network security, Cryptography]
+# --- Fenêtre « Détails » (facultatif) : décommente et complète ---
+# details:
+#   fr: |
+#     Premier paragraphe.
+#
+#     Deuxième paragraphe (une ligne vide = nouveau paragraphe).
+#   en: |
+#     First paragraph.
+# highlights:
+#   fr: [Projet de fin d'études sur…, Mention…]
+#   en: [Final-year project on…, Honours…]
+# website: https://www.imt-atlantique.fr/

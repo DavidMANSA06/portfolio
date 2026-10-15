@@ -1,0 +1,9 @@
+# EXEMPLE (draft: true = vérifié mais non affiché). Copie ce fichier pour chaque certification.
+draft: true
+name:
+  fr: Nom de la certification
+  en: Certification name
+issuer: Organisme
+status: en-preparation # ou : obtenue (alors verifyUrl est obligatoire)
+date: '2027-01' # date d'obtention, ou date prévue
+# verifyUrl: https://www.credly.com/badges/…

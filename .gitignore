@@ -16,6 +16,8 @@ test-results/
 # Fichiers système / éditeur / outils
 .DS_Store
 Claude outputs/
+.claude/launch.json
+.claude/settings.local.json
 *.log
 .vscode/*
 !.vscode/extensions.json
