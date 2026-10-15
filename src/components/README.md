@@ -16,6 +16,7 @@ Les morceaux d'interface réutilisables. Chaque composant a ses styles dans son 
 | `About.astro`              | Texte À propos (lit `src/content/a-propos/fr.md` et `en.md`)               |
 | `ProjectsBand.astro`       | Grande carte « Ce que j'ai construit » vers la page Projets                |
 | `Contact.astro`            | Bloc Contact : email protégé des robots, bouton Copier, liens              |
+| `ProjectCase.astro`        | Une étude de cas de la page Projets (lit `src/content/projets/`)           |
 | `ReadingProgress.astro`    | Barre de progression de lecture (CSS seul)                                 |
 | `Button.astro`             | Lien en forme de bouton (`primary` ou `ghost`)                             |
 | `Icon.astro`               | Icônes SVG au trait (ajouter un tracé dans `paths`)                        |

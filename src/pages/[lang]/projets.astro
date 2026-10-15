@@ -1,12 +1,17 @@
 ---
 /**
  * Page Projets : /fr/projets/ et /en/projets/.
- * Emplacement provisoire (avec la sidebar) pour que « Mes projets » ne mène pas à une 404.
- * Le vrai contenu (études de cas + filtres) arrive dans une PR dédiée.
+ * Les études de cas viennent de src/content/projets/*.yaml (ordre = nom de fichier).
+ *
+ * Filtres SANS JavaScript : chaque filtre est un bouton radio (natif, accessible au clavier).
+ * Le CSS (:has) masque les projets dont data-cats ne contient pas la catégorie cochée.
  */
 import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCase from '../../components/ProjectCase.astro';
 import Sidebar from '../../components/Sidebar.astro';
+import { projectCategories } from '../../config/site';
 import { languages, localizePath, useTranslations, type Lang } from '../../i18n/ui';
 
 export const getStaticPaths = (() =>
@@ -14,19 +19,67 @@ export const getStaticPaths = (() =>
 
 const lang = Astro.params.lang as Lang;
 const t = useTranslations(lang);
+const projects = (await getCollection('projets', ({ data }) => !data.draft)).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
+
+// Un filtre par catégorie utilisée (une catégorie sans projet n'a pas de bouton)
+const filters = [
+  { id: 'all', label: t('projects.all'), count: projects.length },
+  ...projectCategories.map((cat) => ({
+    id: cat,
+    label: t(`projects.cat.${cat}`),
+    count: projects.filter((p) => p.data.categories.includes(cat)).length,
+  })),
+].filter((f) => f.count > 0);
 ---
 
 <BaseLayout
   lang={lang}
   title={`${t('projects.title')} — Mansa David Gocaley`}
-  description={t('site.description')}
+  description={t('projects.lead')}
 >
   <Sidebar lang={lang} current="projects" />
 
   <main class="page with-sidebar">
-    <h1>{t('projects.title')}</h1>
-    <p class="wip">{t('section.wip')}</p>
-    <a href={localizePath(lang)}>← {t('projects.back')}</a>
+    <p class="eyebrow">{t('projects.title')}</p>
+    <h1>{t('band.title')}</h1>
+    <p class="lead">{t('projects.lead')}</p>
+
+    {projects.length === 0 ? (
+      <p class="empty">{t('projects.empty')}</p>
+    ) : (
+      <div class="projects">
+        <fieldset class="filters">
+          <legend class="visually-hidden">{t('projects.filters')}</legend>
+          {filters.map((f) => (
+            <>
+              <input
+                class="visually-hidden"
+                type="radio"
+                name="filter"
+                id={`filter-${f.id}`}
+                value={f.id}
+                checked={f.id === 'all'}
+              />
+              <label for={`filter-${f.id}`}>
+                {f.label} <span class="count">{f.count}</span>
+              </label>
+            </>
+          ))}
+        </fieldset>
+
+        <div class="cases">
+          {projects.map(({ data }, i) => (
+            <ProjectCase lang={lang} project={data} number={i + 1} />
+          ))}
+        </div>
+      </div>
+    )}
+
+    <a class="back" href={localizePath(lang)}>
+      ← {t('projects.back')}
+    </a>
   </main>
 </BaseLayout>
 
@@ -36,21 +89,115 @@ const t = useTranslations(lang);
     padding: 104px 80px;
   }
 
-  h1 {
-    font-size: clamp(40px, 6vw, 72px);
-    letter-spacing: -0.04em;
-    margin: 0 0 8px;
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 14px;
   }
 
-  .wip {
+  h1 {
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    margin: 0 0 18px;
+  }
+
+  .lead {
+    color: var(--color-muted);
+    max-width: 620px;
+    margin: 0 0 24px;
+    font-size: 17px;
+  }
+
+  .empty {
     font-family: var(--font-mono);
     font-size: 13px;
     color: var(--color-muted);
   }
 
+  /* --- Filtres : boutons radio affichés comme des pastilles --- */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border: 0;
+    padding: 0;
+    margin: 0 0 72px;
+  }
+
+  .filters label {
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    background: var(--glass-bg);
+    color: var(--color-muted);
+    border: 1px solid var(--color-border);
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .filters label:hover {
+    color: var(--color-text);
+    border-color: var(--color-text);
+  }
+
+  .filters input:checked + label {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .filters input:focus-visible + label {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    opacity: 0.6;
+    margin-left: 2px;
+  }
+
+  .cases {
+    display: flex;
+    flex-direction: column;
+    gap: 96px;
+  }
+
+  /* --- Le filtrage lui-même : un projet reste visible si sa liste data-cats contient la catégorie --- */
+  .projects:has(#filter-devsecops:checked) :global(.case:not([data-cats~='devsecops'])),
+  .projects:has(#filter-reseau:checked) :global(.case:not([data-cats~='reseau'])),
+  .projects:has(#filter-offensive:checked) :global(.case:not([data-cats~='offensive'])),
+  .projects:has(#filter-iot:checked) :global(.case:not([data-cats~='iot'])) {
+    display: none;
+  }
+
+  .back {
+    display: inline-block;
+    margin-top: 96px;
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
   @media (max-width: 900px) {
     .page {
       padding: 96px 16px 72px;
+    }
+
+    .filters {
+      margin-bottom: 48px;
+    }
+
+    .cases {
+      gap: 64px;
     }
   }
 </style>

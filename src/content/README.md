@@ -12,6 +12,7 @@ Le schéma de chaque collection est dans `src/content.config.ts` : `pnpm build` 
 | `competences/`    | Compétences                       | `01-devsecops.yaml` (un groupe)    |
 | `plateformes/`    | Plateformes (sous Certifications) | `1-tryhackme.yaml` (brouillon)     |
 | `a-propos/`       | À propos (Markdown)               | `fr.md`, `en.md`                   |
+| `projets/`        | Page Projets                      | `01-portfolio.yaml`                |
 
 ## Ajouter une entrée
 
@@ -58,6 +59,18 @@ deux paragraphes. N'y mets pas de HTML brut : le Markdown suffit.
 
 La photo est `src/assets/photo.jpg`. Pour la changer, retire d'abord ses métadonnées EXIF
 (elles peuvent contenir la position GPS de la prise de vue) : Astro la convertit ensuite en WebP.
+
+## Projets
+
+Un fichier = une étude de cas ; le numéro du nom de fichier (`01-`, `02-`…) fixe l'ordre.
+Champs principaux : `title`, `summary`, `organization`, `start` / `end`, `status`
+(`termine` ou `en-cours`), `categories` (`devsecops`, `reseau`, `offensive`, `iot` : elles
+alimentent les filtres), `context`, `done`, `result` (facultatif), `tags`, `links`.
+
+Visuel : sans image, un grand numéro et `visualLabel` s'affichent. Pour une image, place-la dans
+`src/assets/projets/` (sans métadonnées EXIF), puis ajoute dans le YAML
+`image: ../../assets/projets/mon-projet.png` et `imageAlt` (obligatoire). Modèle commenté dans
+`01-portfolio.yaml`.
 
 ## Règles
 

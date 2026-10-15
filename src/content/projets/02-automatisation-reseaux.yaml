@@ -1,0 +1,21 @@
+title:
+  fr: Automatisation de réseaux IP/MPLS
+  en: IP/MPLS network automation
+summary:
+  fr: 'Automatiser le déploiement de services sur des réseaux IP multiconstructeurs.'
+  en: 'Automating service deployment on multi-vendor IP networks.'
+organization: Orange Innovation
+start: '2026-04'
+end: '2026-08'
+status: termine
+categories: [reseau, devsecops]
+context:
+  fr: "Stage R&D : programmabilité et orchestration d'infrastructures IP."
+  en: 'R&D internship: programmability and orchestration of IP infrastructures.'
+done:
+  fr: 'Modélisation YANG/OpenConfig, scripts Python/Bash et connecteurs API.'
+  en: 'YANG/OpenConfig modelling, Python/Bash scripts and API connectors.'
+tags: [Python, YANG, NETCONF, RESTCONF, Cisco NSO, GitLab CI/CD]
+visualLabel:
+  fr: "Schéma d'architecture"
+  en: Architecture diagram

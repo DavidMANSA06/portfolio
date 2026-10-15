@@ -32,6 +32,14 @@ export const sections = [
   { id: 'contact', key: 'nav.contact', icon: 'mail' },
 ] as const;
 
+/**
+ * Catégories des projets, dans l'ordre des boutons de filtre de la page Projets.
+ * Libellés : clés « projects.cat.<catégorie> » dans src/i18n/ui.ts.
+ * Ajouter une catégorie : ajoute-la ici, sa traduction, et sa règle de filtre dans projets.astro.
+ */
+export const projectCategories = ['devsecops', 'reseau', 'offensive', 'iot'] as const;
+export type ProjectCategory = (typeof projectCategories)[number];
+
 export type SectionId = (typeof sections)[number]['id'];
 
 /** Numéro affiché d'une section (« 03 ») : sa place dans le menu, Accueil non compté. */

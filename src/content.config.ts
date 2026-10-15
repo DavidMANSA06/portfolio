@@ -10,6 +10,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { projectCategories } from './config/site';
 import { hasLogo } from './lib/logos';
 
 /** Un texte dans les deux langues : les deux sont obligatoires. */
@@ -132,6 +133,37 @@ const plateformes = defineCollection({
   }),
 });
 
+// Un projet = un fichier (01-portfolio.yaml…) : le numéro fixe l'ordre d'affichage.
+// Chaque projet est une petite étude de cas : contexte, ce que j'ai fait, résultat.
+const projets = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/projets' }),
+  schema: ({ image }) =>
+    z
+      .strictObject({
+        ...common,
+        title: localized,
+        summary: localized, // une phrase sous le titre
+        organization: text, // « Projet personnel », « Orange Innovation »…
+        start: yearMonth,
+        end: yearMonth.optional(), // absent = « en cours »
+        status: z.enum(['termine', 'en-cours']),
+        categories: z.array(z.enum(projectCategories)).min(1),
+        context: localized,
+        done: localized, // ce que j'ai fait
+        result: localized.optional(), // à ajouter quand il est mesurable
+        tags: z.array(z.string().min(1)).default([]),
+        // Visuel (facultatif) : image dans src/assets/projets/, chemin relatif au fichier YAML
+        image: image().optional(),
+        imageAlt: localized.optional(), // description de l'image (obligatoire si image)
+        visualLabel: localized.optional(), // texte affiché à la place, s'il n'y a pas d'image
+        links: z.array(z.strictObject({ label: localized, url: httpsUrl })).default([]),
+      })
+      .refine((p) => !p.image || p.imageAlt, {
+        message: 'Une image doit avoir un imageAlt (texte alternatif)',
+        path: ['imageAlt'],
+      }),
+});
+
 // Texte de la section À propos : un fichier Markdown par langue (fr.md, en.md).
 // Markdown = gras (**mot**) et liens ([texte](/fr/projets/)), sans HTML brut.
 const aPropos = defineCollection({
@@ -146,4 +178,5 @@ export const collections = {
   competences,
   plateformes,
   aPropos,
+  projets,
 };

@@ -43,7 +43,6 @@ const fr = {
   'profile.role': 'Cybersécurité · DevSecOps',
   'social.label': 'Liens',
   'social.resume': 'CV (PDF)',
-  'section.wip': 'Section en construction.',
 
   // Sections : titres et phrases d'introduction
   'about.title': 'À propos',
@@ -89,6 +88,21 @@ const fr = {
   // Page Projets
   'projects.title': 'Projets',
   'projects.back': "Retour à l'accueil",
+  'projects.lead':
+    "Chaque projet est présenté comme une petite étude de cas : le contexte, ce que j'ai fait, et le résultat.",
+  'projects.filters': 'Filtrer les projets',
+  'projects.all': 'Tous',
+  'projects.cat.devsecops': 'DevSecOps',
+  'projects.cat.reseau': 'Réseaux',
+  'projects.cat.offensive': 'Sécurité offensive',
+  'projects.cat.iot': 'IoT',
+  'projects.context': 'Contexte',
+  'projects.done': "Ce que j'ai fait",
+  'projects.result': 'Résultat',
+  'projects.status.termine': 'Terminé',
+  'projects.status.en-cours': 'En cours',
+  'projects.tags': 'Technologies',
+  'projects.empty': 'Mes premiers projets arrivent bientôt.',
 
   // Outils
   'lang.label': 'Changer de langue',
@@ -123,7 +137,6 @@ const en: Record<keyof typeof fr, string> = {
   'profile.role': 'Cybersecurity · DevSecOps',
   'social.label': 'Links',
   'social.resume': 'Resume (PDF)',
-  'section.wip': 'Section under construction.',
 
   'about.title': 'About me',
   'about.photo': 'Photo of Mansa David Gocaley',
@@ -165,6 +178,21 @@ const en: Record<keyof typeof fr, string> = {
 
   'projects.title': 'Projects',
   'projects.back': 'Back to home',
+  'projects.lead':
+    'Each project is presented as a short case study: the context, what I did, and the outcome.',
+  'projects.filters': 'Filter projects',
+  'projects.all': 'All',
+  'projects.cat.devsecops': 'DevSecOps',
+  'projects.cat.reseau': 'Networking',
+  'projects.cat.offensive': 'Offensive security',
+  'projects.cat.iot': 'IoT',
+  'projects.context': 'Context',
+  'projects.done': 'What I did',
+  'projects.result': 'Outcome',
+  'projects.status.termine': 'Completed',
+  'projects.status.en-cours': 'In progress',
+  'projects.tags': 'Technologies',
+  'projects.empty': 'My first projects are coming soon.',
 
   'lang.label': 'Switch language',
   'theme.label': 'Dark theme',
