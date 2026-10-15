@@ -13,6 +13,9 @@ Les morceaux d'interface réutilisables. Chaque composant a ses styles dans son 
 | `SkillGrid.astro`          | Groupes de compétences : logos et étoiles (lit `src/content/competences/`) |
 | `PlatformList.astro`       | Plateformes d'entraînement (lit `src/content/plateformes/`)                |
 | `SkillLogo.astro`          | Tuile d'un logo `simple-icons` (SVG au build) ou d'initiales               |
+| `About.astro`              | Texte À propos (lit `src/content/a-propos/fr.md` et `en.md`)               |
+| `ProjectsBand.astro`       | Grande carte « Ce que j'ai construit » vers la page Projets                |
+| `Contact.astro`            | Bloc Contact : email protégé des robots, bouton Copier, liens              |
 | `ReadingProgress.astro`    | Barre de progression de lecture (CSS seul)                                 |
 | `Button.astro`             | Lien en forme de bouton (`primary` ou `ghost`)                             |
 | `Icon.astro`               | Icônes SVG au trait (ajouter un tracé dans `paths`)                        |

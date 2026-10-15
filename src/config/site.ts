@@ -10,6 +10,12 @@ export const site = {
     linkedin: '', // ex. 'https://www.linkedin.com/in/ton-profil/'
     resume: '', // ex. '/cv-mansa-david-gocaley.pdf' (fichier à placer dans public/)
   },
+  /**
+   * Email en deux morceaux : l'adresse complète n'est jamais écrite dans le HTML,
+   * pour que les robots qui aspirent les adresses (spam) ne la trouvent pas.
+   * Le script de Contact.astro la reconstitue dans le navigateur.
+   */
+  email: { user: 'mansa.gocaley', domain: 'imt-atlantique.net' },
 } as const;
 
 /**
