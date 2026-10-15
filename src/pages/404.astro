@@ -1,0 +1,113 @@
+---
+/**
+ * Page 404 : affichée quand une adresse n'existe pas (dist/404.html).
+ * Une seule page pour les deux langues : le serveur (Nginx, étape 8) renvoie ce même fichier
+ * pour toute adresse inconnue, il ne sait pas quelle langue le visiteur attendait.
+ * noindex : les moteurs de recherche ne l'ajoutent pas à leurs résultats.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { localizePath } from '../i18n/ui';
+---
+
+<BaseLayout
+  lang="fr"
+  title="Page introuvable — Mansa David Gocaley"
+  description="Cette page n'existe pas ou a été déplacée."
+  noindex
+>
+  <main class="notfound">
+    <p class="code" aria-hidden="true">
+      404
+    </p>
+    <h1>Page introuvable.</h1>
+    <p class="text">Cette page n'existe pas ou a été déplacée.</p>
+    <p class="text" lang="en">
+      This page doesn't exist or has been moved.
+    </p>
+    <nav class="actions" aria-label="Retour · Back">
+      <a class="btn primary" href={localizePath('fr')}>
+        <Icon name="home" /> Retour à l'accueil
+      </a>
+      <a class="btn" href={localizePath('en')} lang="en">
+        Back to home <Icon name="arrow-right" />
+      </a>
+    </nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .notfound {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 16px;
+  }
+
+  .code {
+    font-family: var(--font-mono);
+    font-size: clamp(96px, 20vw, 168px);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 1;
+    margin: 0 0 8px;
+    color: var(--color-border);
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin: 0 0 14px;
+  }
+
+  .text {
+    color: var(--color-muted);
+    margin: 0 0 4px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 32px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .btn:hover {
+    border-color: var(--color-text);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .btn :global(.icon) {
+    width: 16px;
+    height: 16px;
+  }
+</style>
