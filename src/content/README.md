@@ -11,6 +11,7 @@ Le schéma de chaque collection est dans `src/content.config.ts` : `pnpm build` 
 | `certifications/` | Certifications                    | `exemple.yaml` (modèle, brouillon) |
 | `competences/`    | Compétences                       | `01-devsecops.yaml` (un groupe)    |
 | `plateformes/`    | Plateformes (sous Certifications) | `1-tryhackme.yaml` (brouillon)     |
+| `a-propos/`       | À propos (Markdown)               | `fr.md`, `en.md`                   |
 
 ## Ajouter une entrée
 
@@ -48,6 +49,15 @@ Un fichier = un groupe (titre, icône, liste de compétences). Le numéro du nom
 - `abbr` : les initiales affichées s'il n'y a pas de logo (4 caractères max).
 
 Les logos noirs (OWASP, Symfony, Java…) passent automatiquement en blanc en thème sombre.
+
+## À propos
+
+Le texte est en Markdown, un fichier par langue : `a-propos/fr.md` et `a-propos/en.md`.
+`**mot**` met un mot en valeur, `[texte](/fr/projets/)` crée un lien, une ligne vide sépare
+deux paragraphes. N'y mets pas de HTML brut : le Markdown suffit.
+
+La photo est `src/assets/photo.jpg`. Pour la changer, retire d'abord ses métadonnées EXIF
+(elles peuvent contenir la position GPS de la prise de vue) : Astro la convertit ensuite en WebP.
 
 ## Règles
 

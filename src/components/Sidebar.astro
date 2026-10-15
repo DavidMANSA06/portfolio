@@ -8,6 +8,8 @@
  *
  * Liens du menu : src/config/site.ts (sections) ; textes : src/i18n/ui.ts (nav.*).
  */
+import { Image } from 'astro:assets';
+import photo from '../assets/photo.jpg';
 import { sections, site } from '../config/site';
 import { localizePath, useTranslations, type Lang } from '../i18n/ui';
 import Icon from './Icon.astro';
@@ -44,10 +46,16 @@ const { github, linkedin, resume } = site.links;
   </div>
 
   <div class="profile">
-    <!-- Photo : arrivera avec la section À propos (5.6) -->
-    <div class="avatar" aria-hidden="true">
-      {site.initials}
-    </div>
+    <!-- Photo optimisée au build (WebP, taille exacte) ; l'original n'a plus de métadonnées EXIF -->
+    <Image
+      class="avatar"
+      src={photo}
+      alt={t('about.photo')}
+      width={104}
+      height={104}
+      densities={[1, 2]}
+      loading="eager"
+    />
     <div>
       <p class="profile-name">{site.name}</p>
       <p class="profile-role">{t('profile.role')}</p>
@@ -257,13 +265,11 @@ const { github, linkedin, resume } = site.links;
     height: 104px;
     border-radius: 50%;
     margin: 0 auto 14px;
-    display: grid;
-    place-items: center;
+    display: block;
+    object-fit: cover;
     background: var(--color-accent-soft);
     border: 3px solid var(--color-surface);
     box-shadow: 0 0 0 1.5px var(--color-border);
-    font: 600 28px var(--font-mono);
-    color: var(--color-accent);
   }
 
   .profile p {

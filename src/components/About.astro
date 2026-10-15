@@ -1,0 +1,67 @@
+---
+/**
+ * About : le texte de la section À propos (src/content/a-propos/fr.md et en.md).
+ * Markdown : **mot** = mot mis en valeur ; [texte](/fr/projets/) = lien.
+ * Le Markdown est transformé en HTML au build par Astro : pas de set:html.
+ */
+import { getEntry, render } from 'astro:content';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const entry = await getEntry('aPropos', lang);
+if (!entry) throw new Error(`Texte À propos manquant : src/content/a-propos/${lang}.md`);
+const { Content } = await render(entry);
+---
+
+<div class="prose reveal">
+  <Content />
+</div>
+
+<style>
+  /* :global car le HTML vient du Markdown (il n'a pas les attributs de style du composant) */
+  .prose {
+    max-width: 740px;
+    margin: 0 auto;
+  }
+
+  .prose :global(p) {
+    font-size: 20px;
+    line-height: 1.8;
+    margin: 0 0 22px;
+    color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  }
+
+  .prose :global(strong) {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  /* Lien souligné qui se rétracte au survol */
+  .prose :global(a) {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1.5px no-repeat;
+    transition: background-size 0.35s var(--ease-out);
+  }
+
+  .prose :global(a:hover) {
+    background-size: 0 1.5px;
+    background-position: 100% 100%;
+  }
+
+  .prose :global(a:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .prose :global(p) {
+      font-size: 17px;
+    }
+  }
+</style>

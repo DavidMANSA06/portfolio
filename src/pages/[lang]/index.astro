@@ -6,11 +6,14 @@
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import About from '../../components/About.astro';
 import CertificationGrid from '../../components/CertificationGrid.astro';
+import Contact from '../../components/Contact.astro';
 import EducationGrid from '../../components/EducationGrid.astro';
 import ExperienceTimeline from '../../components/ExperienceTimeline.astro';
 import Landing from '../../components/Landing.astro';
 import PlatformList from '../../components/PlatformList.astro';
+import ProjectsBand from '../../components/ProjectsBand.astro';
 import ReadingProgress from '../../components/ReadingProgress.astro';
 import Section from '../../components/Section.astro';
 import Sidebar from '../../components/Sidebar.astro';
@@ -36,14 +39,14 @@ const t = useTranslations(lang);
   <Landing lang={lang} />
 
   <main class="with-sidebar">
-    <!-- À venir (5.6) -->
     <Section
       id="a-propos"
       number={sectionNumber('a-propos')}
       eyebrow={t('nav.about')}
-      title={t('nav.about')}
+      title={t('about.title')}
+      centered
     >
-      <p class="wip">{t('section.wip')}</p>
+      <About lang={lang} />
     </Section>
 
     <Section
@@ -87,23 +90,7 @@ const t = useTranslations(lang);
       <PlatformList lang={lang} />
     </Section>
 
-    <!-- À venir (5.6) -->
-    <Section
-      id="contact"
-      number={sectionNumber('contact')}
-      eyebrow={t('nav.contact')}
-      title={t('nav.contact')}
-    >
-      <p class="wip">{t('section.wip')}</p>
-    </Section>
+    <ProjectsBand lang={lang} />
+    <Contact lang={lang} />
   </main>
 </BaseLayout>
-
-<style>
-  /* Texte provisoire des sections encore vides */
-  .wip {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--color-muted);
-  }
-</style>

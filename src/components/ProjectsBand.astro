@@ -1,0 +1,130 @@
+---
+/**
+ * ProjectsBand : la grande carte « Ce que j'ai construit » qui mène à la page Projets.
+ * Elle n'est pas dans le menu des sections, puisque les projets ont leur propre page.
+ */
+import { localizePath, useTranslations, type Lang } from '../i18n/ui';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="wrap">
+  <a class="band reveal" href={localizePath(lang, 'projets/')}>
+    <div>
+      <p class="eyebrow">{t('band.eyebrow')}</p>
+      <p class="title">{t('band.title')}</p>
+      <p class="lead">{t('band.lead')}</p>
+    </div>
+    <span class="arrow" aria-hidden="true">
+      <Icon name="arrow-right" />
+    </span>
+  </a>
+</div>
+
+<style>
+  .wrap {
+    max-width: calc(var(--content-max) + 160px);
+    padding: 104px 80px 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 44px 48px;
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+      border-color 0.25s,
+      transform 0.25s var(--ease-out);
+  }
+
+  .band:hover {
+    border-color: var(--color-text);
+    transform: translateY(-2px);
+  }
+
+  .band:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+
+  .title {
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin: 0 0 8px;
+  }
+
+  .lead {
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  .arrow {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .arrow :global(.icon) {
+    width: 24px;
+    height: 24px;
+  }
+
+  .band:hover .arrow {
+    transform: rotate(-45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .band:hover,
+    .band:hover .arrow {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .wrap {
+      padding: 72px 16px 0;
+    }
+
+    .band {
+      padding: 28px 24px;
+    }
+
+    .title {
+      font-size: 30px;
+    }
+
+    .arrow {
+      width: 48px;
+      height: 48px;
+    }
+  }
+</style>

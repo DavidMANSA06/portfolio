@@ -132,4 +132,18 @@ const plateformes = defineCollection({
   }),
 });
 
-export const collections = { experiences, formations, certifications, competences, plateformes };
+// Texte de la section À propos : un fichier Markdown par langue (fr.md, en.md).
+// Markdown = gras (**mot**) et liens ([texte](/fr/projets/)), sans HTML brut.
+const aPropos = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/a-propos' }),
+  schema: z.strictObject({}),
+});
+
+export const collections = {
+  experiences,
+  formations,
+  certifications,
+  competences,
+  plateformes,
+  aPropos,
+};

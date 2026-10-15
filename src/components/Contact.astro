@@ -1,0 +1,261 @@
+---
+/**
+ * Contact : bloc « inversé » (noir en thème clair) avec l'email et les liens.
+ *
+ * Protection de l'email contre les robots (spam) :
+ * - le HTML ne contient jamais l'adresse complète, seulement « user [at] domaine » ;
+ * - sans JavaScript, ce texte reste lisible et utilisable par un humain ;
+ * - avec JavaScript, le script ci-dessous le remplace par un vrai lien mailto:
+ *   et affiche le bouton « Copier » (caché par défaut avec l'attribut hidden).
+ */
+import { sectionNumber, site } from '../config/site';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const { github, linkedin, resume } = site.links;
+const { user, domain } = site.email;
+const num = String(sectionNumber('contact')).padStart(2, '0');
+---
+
+<section class="section" id="contact" aria-labelledby="contact-title">
+  <div class="box reveal">
+    <div>
+      <p class="eyebrow">
+        {num} — {t('nav.contact')}
+      </p>
+      <h2 id="contact-title">{t('contact.title')}</h2>
+      <p class="lead">{t('contact.lead')}</p>
+    </div>
+
+    <ul class="links">
+      <li class="row" data-email-user={user} data-email-domain={domain}>
+        <span class="email">
+          {user} [at] {domain}
+        </span>
+        <button class="copy" type="button" aria-label={t('contact.copyLabel')} hidden>
+          <span class="lbl-copy">{t('contact.copy')}</span>
+          <span class="lbl-done" aria-hidden="true">
+            {t('contact.copied')}
+          </span>
+        </button>
+        <span class="visually-hidden" role="status"></span>
+      </li>
+      {linkedin && (
+        <li>
+          <a class="row" href={linkedin} target="_blank" rel="noopener noreferrer">
+            LinkedIn{' '}
+            <span class="hint" aria-hidden="true">
+              ↗
+            </span>
+            <span class="visually-hidden"> {t('link.newTab')}</span>
+          </a>
+        </li>
+      )}
+      <li>
+        <a class="row" href={github} target="_blank" rel="noopener noreferrer">
+          GitHub{' '}
+          <span class="hint" aria-hidden="true">
+            ↗
+          </span>
+          <span class="visually-hidden"> {t('link.newTab')}</span>
+        </a>
+      </li>
+      {resume && (
+        <li>
+          <a class="row" href={resume} download>
+            {t('social.resume')}{' '}
+            <span class="hint" aria-hidden="true">
+              ↓
+            </span>
+          </a>
+        </li>
+      )}
+    </ul>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-email-user]').forEach((row) => {
+    const address = `${row.dataset.emailUser}@${row.dataset.emailDomain}`;
+    const text = row.querySelector('.email');
+    const button = row.querySelector<HTMLButtonElement>('.copy');
+    const status = row.querySelector('[role="status"]');
+
+    // 1. Le texte « user [at] domaine » devient un vrai lien mailto:
+    const link = document.createElement('a');
+    link.href = `mailto:${address}`;
+    link.textContent = address;
+    link.className = 'email';
+    text?.replaceWith(link);
+
+    // 2. Bouton « Copier » : visible seulement si le presse-papiers est disponible
+    if (!button || !navigator.clipboard) return;
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(address);
+      } catch {
+        return; // copie refusée par le navigateur : le lien mailto reste utilisable
+      }
+      button.classList.add('copied');
+      if (status) status.textContent = button.querySelector('.lbl-done')?.textContent ?? '';
+      setTimeout(() => {
+        button.classList.remove('copied');
+        if (status) status.textContent = '';
+      }, 2000);
+    });
+  });
+</script>
+
+<style>
+  .section {
+    max-width: calc(var(--content-max) + 160px);
+    padding: 104px 80px;
+  }
+
+  .box {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: end;
+    padding: 56px;
+    border-radius: 16px;
+    background: var(--inverse-bg);
+    color: var(--inverse-text);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--inverse-muted);
+    margin: 0 0 14px;
+  }
+
+  h2 {
+    font-size: 38px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin: 0 0 14px;
+  }
+
+  .lead {
+    color: var(--inverse-muted);
+    margin: 0;
+  }
+
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--inverse-border);
+    color: var(--inverse-text);
+    font-size: 15px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .row:hover,
+  .row:focus-within {
+    border-color: var(--inverse-text);
+  }
+
+  a.row:focus-visible,
+  .row :global(a:focus-visible),
+  .copy:focus-visible {
+    outline: 2px solid var(--inverse-text);
+    outline-offset: 3px;
+  }
+
+  /* L'adresse (texte, puis lien créé par le script) */
+  .row :global(.email) {
+    color: inherit;
+    overflow-wrap: anywhere;
+  }
+
+  .hint {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--inverse-muted);
+    transition: transform 0.25s var(--ease-out);
+  }
+
+  a.row:hover .hint {
+    transform: translateX(3px);
+  }
+
+  .copy {
+    margin-left: auto;
+    flex-shrink: 0;
+    cursor: pointer;
+    font: 500 12px var(--font-mono);
+    color: var(--inverse-text);
+    background: transparent;
+    border: 1px solid var(--inverse-border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .copy[hidden] {
+    display: none;
+  }
+
+  .copy:hover {
+    border-color: var(--inverse-text);
+  }
+
+  .lbl-done {
+    display: none;
+  }
+
+  .copied .lbl-copy {
+    display: none;
+  }
+
+  .copied .lbl-done {
+    display: inline;
+  }
+
+  .copied {
+    background: var(--inverse-text);
+    color: var(--inverse-bg);
+    border-color: var(--inverse-text);
+  }
+
+  @media (max-width: 900px) {
+    .section {
+      padding: 72px 16px;
+    }
+
+    .box {
+      grid-template-columns: 1fr;
+      padding: 32px 24px;
+    }
+
+    h2 {
+      font-size: 30px;
+    }
+  }
+</style>
