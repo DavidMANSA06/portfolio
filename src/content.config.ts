@@ -10,6 +10,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { hasLogo } from './lib/logos';
 
 /** Un texte dans les deux langues : les deux sont obligatoires. */
 const localized = z.object({
@@ -90,4 +91,45 @@ const certifications = defineCollection({
     }),
 });
 
-export const collections = { experiences, formations, certifications };
+/** Nom d'un logo simple-icons (ex. "python") : une faute de frappe fait échouer le build. */
+const logo = z
+  .string()
+  .refine(hasLogo, 'Logo inconnu : cherche son nom (slug) sur https://simpleicons.org');
+
+/** Un texte identique dans les deux langues (« Docker ») ou traduit ({ fr: …, en: … }). */
+const text = z.union([z.string().min(1), localized]);
+
+// Un groupe de compétences = un fichier (01-devsecops.yaml…) : le numéro fixe l'ordre d'affichage.
+const competences = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/competences' }),
+  schema: z.strictObject({
+    ...common,
+    title: localized,
+    icon: z.enum(['shield', 'target', 'server', 'network', 'code']), // icône du titre
+    skills: z
+      .array(
+        z.strictObject({
+          name: text,
+          level: z.number().int().min(0).max(5), // nombre d'étoiles
+          logo: logo.optional(), // pas de logo : les initiales (abbr) s'affichent
+          abbr: z.string().min(1).max(4).optional(),
+        }),
+      )
+      .min(1),
+  }),
+});
+
+// Plateformes d'entraînement (TryHackMe, Root-Me…) : un fichier par plateforme.
+const plateformes = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/plateformes' }),
+  schema: z.strictObject({
+    ...common,
+    name: z.string().min(1),
+    logo: logo.optional(),
+    abbr: z.string().min(1).max(4).optional(),
+    stat: text, // ex. "pseudo · Top 5 %"
+    profileUrl: httpsUrl.optional(), // lien vers le profil public
+  }),
+});
+
+export const collections = { experiences, formations, certifications, competences, plateformes };

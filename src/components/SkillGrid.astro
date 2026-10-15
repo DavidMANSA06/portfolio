@@ -1,0 +1,120 @@
+---
+/**
+ * SkillGrid : les groupes de compétences (src/content/competences/*.yaml).
+ * Chaque compétence = une tuile (logo ou initiales), son nom et son niveau en étoiles (0 à 5).
+ * Les groupes s'affichent dans l'ordre des noms de fichiers (01-…, 02-…).
+ */
+import { getCollection } from 'astro:content';
+import { useTranslations, type Lang } from '../i18n/ui';
+import Icon from './Icon.astro';
+import SkillLogo from './SkillLogo.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const groups = (await getCollection('competences', ({ data }) => !data.draft)).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
+const label = (name: string | Record<Lang, string>) =>
+  typeof name === 'string' ? name : name[lang];
+---
+
+{groups.map(({ data }) => (
+  <div class="group reveal">
+    <h3>
+      <Icon name={data.icon} />
+      {data.title[lang]}
+    </h3>
+    <ul class="skills">
+      {data.skills.map((skill) => (
+        <li class="skill">
+          <SkillLogo logo={skill.logo} abbr={skill.abbr} fallback={label(skill.name)} />
+          <span class="name">{label(skill.name)}</span>
+          <span class="stars" role="img" aria-label={`${t('skills.level')} ${skill.level}/5`}>
+            <b>{'★'.repeat(skill.level)}</b>
+            {'★'.repeat(5 - skill.level)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </div>
+))}
+
+<style>
+  .group + .group {
+    margin-top: 56px;
+  }
+
+  h3 {
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h3 :global(.icon) {
+    width: 22px;
+    height: 22px;
+    color: var(--color-accent);
+  }
+
+  .skills {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    gap: 28px 16px;
+  }
+
+  .skill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .skill :global(.tile) {
+    transition: transform 0.2s ease;
+  }
+
+  .skill:hover :global(.tile) {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skill:hover :global(.tile) {
+      transform: none;
+    }
+  }
+
+  .name {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  /* Étoiles vides en gris, pleines en jaune doré */
+  .stars {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--color-border);
+  }
+
+  .stars b {
+    color: var(--color-star);
+    font-weight: 400;
+  }
+
+  @media (max-width: 900px) {
+    .skills {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 24px 8px;
+    }
+  }
+</style>

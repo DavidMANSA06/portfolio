@@ -1,0 +1,15 @@
+title:
+  fr: 'Systèmes, conteneurs & cloud'
+  en: 'Systems, containers & cloud'
+icon: server
+skills:
+  - { name: GNU/Linux, logo: linux, level: 4 }
+  - { name: Docker, logo: docker, level: 4 }
+  - { name: Kubernetes, logo: kubernetes, level: 3 }
+  - name: # nom traduit
+      fr: Virtualisation
+      en: Virtualization
+    logo: vmware
+    level: 3
+  - { name: Ansible, logo: ansible, level: 2 }
+  - { name: AWS, abbr: AWS, level: 1 }

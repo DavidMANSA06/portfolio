@@ -1,0 +1,13 @@
+title:
+  fr: Sécurité offensive
+  en: Offensive security
+icon: target
+skills:
+  - { name: Pentest Web · OWASP Top 10, logo: owasp, level: 3 }
+  - { name: Burp Suite, logo: burpsuite, level: 3 }
+  - { name: Metasploit, logo: metasploit, level: 3 }
+  - { name: Nmap, abbr: NMAP, level: 4 }
+  - { name: Wireshark, logo: wireshark, level: 4 }
+  - { name: Gobuster, abbr: GOB, level: 3 }
+  - { name: John the Ripper, abbr: JtR, level: 3 }
+  - { name: Windows / AD, abbr: AD, level: 1 }

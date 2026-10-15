@@ -1,0 +1,15 @@
+title:
+  fr: Réseaux
+  en: Networking
+icon: network
+skills:
+  - name:
+      fr: TCP/IP · routage
+      en: TCP/IP · routing
+    abbr: IP
+    level: 4
+  - { name: DNS · HTTP(S) · SSH, abbr: DNS, level: 4 }
+  - { name: Firewalls · VPN · IDS/IPS, abbr: FW, level: 3 }
+  - { name: YANG · NETCONF · RESTCONF, abbr: YANG, level: 4 }
+  - { name: OpenConfig, abbr: OC, level: 3 }
+  - { name: Cisco NSO, logo: cisco, level: 3 }

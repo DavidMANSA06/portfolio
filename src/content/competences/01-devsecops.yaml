@@ -1,0 +1,13 @@
+# Un groupe de compétences = un fichier. Le numéro du nom de fichier fixe l'ordre d'affichage.
+title:
+  fr: 'DevSecOps & CI/CD'
+  en: 'DevSecOps & CI/CD'
+icon: shield # icône du titre : shield, target, server, network ou code
+skills:
+  # level : nombre d'étoiles (0 à 5)
+  # logo : nom sur https://simpleicons.org (facultatif) ; sans logo, abbr s'affiche
+  - { name: Git, logo: git, level: 4 }
+  - { name: GitLab CI/CD, logo: gitlab, level: 4 }
+  - { name: SAST / DAST / SCA, abbr: SAST, level: 3 }
+  - { name: SonarQube, logo: sonarqubeserver, level: 2 }
+  - { name: OWASP ZAP, logo: owasp, level: 2 }

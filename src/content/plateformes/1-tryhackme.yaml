@@ -1,0 +1,6 @@
+# BROUILLON (draft: true = non affiché) : remplis stat et profileUrl, puis passe draft à false.
+draft: true
+name: TryHackMe
+logo: tryhackme
+stat: '[pseudo · rang]' # ex. 'mansadavid · Top 5 %' (même texte en FR et EN)
+# profileUrl: https://tryhackme.com/p/…

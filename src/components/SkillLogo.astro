@@ -1,0 +1,88 @@
+---
+/**
+ * SkillLogo : la tuile d'un logo de marque (simple-icons), ou des initiales s'il n'y en a pas.
+ *   <SkillLogo logo="python" />   <SkillLogo abbr="SQL" />
+ * Le SVG est écrit dans la page au build : pas de requête externe, compatible avec la CSP.
+ * La couleur de marque passe par l'attribut fill (pas de style en ligne).
+ */
+import { getLogo, isDarkColor } from '../lib/logos';
+
+interface Props {
+  logo?: string;
+  abbr?: string;
+  /** Texte de secours si ni logo ni abbr : ses 3 premières lettres. */
+  fallback: string;
+  size?: 'md' | 'sm';
+}
+
+const { logo, abbr, fallback, size = 'md' } = Astro.props;
+const icon = logo ? getLogo(logo) : undefined;
+---
+
+<span
+  class:list={['tile', size, { 'dark-logo': icon && isDarkColor(icon.hex) }]}
+  aria-hidden="true"
+>
+  {icon ? (
+    <svg viewBox="0 0 24 24" focusable="false" fill={`#${icon.hex}`}>
+      <path d={icon.path} />
+    </svg>
+  ) : (
+    (abbr ?? fallback.slice(0, 3).toUpperCase())
+  )}
+</span>
+
+<style>
+  .tile {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: var(--tile-bg);
+    border: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--color-accent);
+  }
+
+  .md {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    font-size: 15px;
+  }
+
+  .md svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  .sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .sm svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Logos de marque noirs (OWASP, Symfony, Java…) : couleur du texte en thème sombre */
+  :global(:root[data-theme='dark']) .dark-logo svg {
+    fill: var(--color-text);
+  }
+
+  @media (max-width: 900px) {
+    .md {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+    }
+
+    .md svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+</style>
